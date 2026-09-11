@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AmoOAuthController;
 use App\Http\Controllers\AmoWebhookController;
 
+
+Route::get('/', function (){return 'AmoCRM SLA tracker';});
+
 Route::get('/oauth/callback', [AmoOAuthController::class, 'callback']);
 
 Route::prefix('webhooks/amo')->group(function () {
