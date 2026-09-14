@@ -1,0 +1,11 @@
+.sla_container{
+    background-color: lightgoldenrodyellow;
+}
+#delayCol{
+    margin-left: 4px;
+}
+#sla_counterButton{
+    width: 30px;
+    font-weight: bold;
+    margin-left: 10px;
+}
