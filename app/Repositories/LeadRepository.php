@@ -5,6 +5,7 @@ use App\Models\Lead;
 
 class LeadRepository{
     public function add($data){
-        
+        $result = Lead::updateOrInsert($data);
+        return $result;
     }
 }
