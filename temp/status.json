@@ -1,0 +1,178 @@
+{
+  "account": {
+    "subdomain": "tkdvina",
+    "id": "30078538",
+    "_links": {
+      "self": "https://tkdvina.amocrm.ru"
+    }
+  },
+  "leads": {
+    "status": {
+      "0": {
+        "id": "29150617",
+        "name": "дата тест",
+        "status_id": "73140338",
+        "old_status_id": "73139662",
+        "price": "123",
+        "price_with_minor_units": "123",
+        "responsible_user_id": "12674562",
+        "last_modified": "1790069786",
+        "modified_user_id": "0",
+        "created_user_id": "12674562",
+        "date_create": "1789997489",
+        "pipeline_id": "9088966",
+        "account_id": "30078538",
+        "custom_fields": {
+          "0": {
+            "id": "726551",
+            "name": "ID для склейки",
+            "values": {
+              "0": {
+                "value": "29150617"
+              }
+            }
+          },
+          "1": {
+            "id": "477083",
+            "name": "Вид услуг",
+            "values": {
+              "0": {
+                "value": "Междугородняя перевозка",
+                "enum": "286959"
+              }
+            }
+          },
+          "2": {
+            "id": "726059",
+            "name": "Предварительная маржинальность",
+            "values": {
+              "0": {
+                "value": "До 10 тыс",
+                "enum": "687453"
+              }
+            }
+          },
+          "3": {
+            "id": "726133",
+            "name": "Срочность",
+            "values": {
+              "0": {
+                "value": "В ближайшее время",
+                "enum": "687529"
+              }
+            }
+          },
+          "4": {
+            "id": "726055",
+            "name": "Общая себестоимость",
+            "values": {
+              "0": {
+                "value": "0"
+              }
+            }
+          },
+          "5": {
+            "id": "726197",
+            "name": "Бриф Аренда спецтехники",
+            "values": {
+              "0": {
+                "value": "https://forms.amocrm.ru/rdxlwlc?dp=Q1zaSQHqO-hHArUG1UMtpXwGGumRM4Frtf5Ylo84cTjgxwY_Rv2r-Z7GCHarLodN"
+              }
+            }
+          },
+          "6": {
+            "id": "726447",
+            "name": "Бриф Грузчики/Такелаж/Склад",
+            "values": {
+              "0": {
+                "value": "https://forms.amocrm.ru/rdxlwrl?dp=Q1zaSQHqO-hHArUG1UMtpXwGGumRM4Frtf5Ylo84cTjgxwY_Rv2r-Z7GCHarLodN"
+              }
+            }
+          },
+          "7": {
+            "id": "726449",
+            "name": "Бриф Перевозка грузов",
+            "values": {
+              "0": {
+                "value": "https://forms.amocrm.ru/rdzwlvv?dp=Q1zaSQHqO-hHArUG1UMtpXwGGumRM4Frtf5Ylo84cTjgxwY_Rv2r-Z7GCHarLodN"
+              }
+            }
+          },
+          "8": {
+            "id": "726399",
+            "name": "Взяли в работу",
+            "values": {
+              "0": {
+                "value": "1"
+              }
+            }
+          },
+          "9": {
+            "id": "731973",
+            "name": "Дата Время создания",
+            "values": {
+              "0": "0"
+            }
+          },
+          "10": {
+            "id": "726897",
+            "name": "Дата создания",
+            "values": {
+              "0": "1789938000"
+            }
+          },
+          "11": {
+            "id": "726899",
+            "name": "Дата телефон получен",
+            "values": {
+              "0": "1789938000"
+            }
+          },
+          "12": {
+            "id": "726901",
+            "name": "Дата взяли в работу",
+            "values": {
+              "0": "1789938000"
+            }
+          },
+          "13": {
+            "id": "726903",
+            "name": "Дата квалифицирован",
+            "values": {
+              "0": "1789938000"
+            }
+          },
+          "14": {
+            "id": "726919",
+            "name": "Телефон получен",
+            "values": {
+              "0": {
+                "value": "1"
+              }
+            }
+          },
+          "15": {
+            "id": "726921",
+            "name": "Взяли в работу",
+            "values": {
+              "0": {
+                "value": "1"
+              }
+            }
+          },
+          "16": {
+            "id": "726923",
+            "name": "Квалифицирован",
+            "values": {
+              "0": {
+                "value": "1"
+              }
+            }
+          }
+        },
+        "created_at": "1789997489",
+        "updated_at": "1790069786"
+      }
+    }
+  }
+}

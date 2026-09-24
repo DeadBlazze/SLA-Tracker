@@ -1,0 +1,464 @@
+{
+    "id": 29149479,
+    "name": "Запрос ставки септик калуга- арх79095550264",
+    "price": 62000,
+    "price_with_minor_units": 62000.0,
+    "responsible_user_id": 13970306,
+    "group_id": 0,
+    "status_id": 73249794,
+    "pipeline_id": 9089018,
+    "loss_reason_id": null,
+    "created_by": 8038798,
+    "updated_by": 0,
+    "created_at": 1789983891,
+    "updated_at": 1790145741,
+    "closed_at": null,
+    "closest_task_at": 1790369940,
+    "is_deleted": false,
+    "custom_fields_values": [
+        {
+            "field_id": 729789,
+            "field_name": "Номер sipuni",
+            "field_code": null,
+            "field_type": "text",
+            "values": [
+                {
+                    "value": "89210812077"
+                }
+            ]
+        },
+        {
+            "field_id": 726899,
+            "field_name": "Дата телефон получен",
+            "field_code": null,
+            "field_type": "date",
+            "values": [
+                {
+                    "value": 1789938000
+                }
+            ]
+        },
+        {
+            "field_id": 726919,
+            "field_name": "Телефон получен",
+            "field_code": null,
+            "field_type": "checkbox",
+            "values": [
+                {
+                    "value": true
+                }
+            ]
+        },
+        {
+            "field_id": 726449,
+            "field_name": "Бриф Перевозка грузов",
+            "field_code": null,
+            "field_type": "url",
+            "values": [
+                {
+                    "value": "https://forms.amocrm.ru/rdzwlvv?dp=Q1zaSQHqO-hHArUG1UMtpXwGGumRM4Frtf5Ylo84cTjE8-5AR1IY3gLeO_ns2ojV"
+                }
+            ]
+        },
+        {
+            "field_id": 726551,
+            "field_name": "ID для склейки",
+            "field_code": null,
+            "field_type": "numeric",
+            "values": [
+                {
+                    "value": "29149479"
+                }
+            ]
+        },
+        {
+            "field_id": 726055,
+            "field_name": "Общая себестоимость",
+            "field_code": null,
+            "field_type": "numeric",
+            "values": [
+                {
+                    "value": "0"
+                }
+            ]
+        },
+        {
+            "field_id": 726197,
+            "field_name": "Бриф Аренда спецтехники",
+            "field_code": null,
+            "field_type": "url",
+            "values": [
+                {
+                    "value": "https://forms.amocrm.ru/rdxlwlc?dp=Q1zaSQHqO-hHArUG1UMtpXwGGumRM4Frtf5Ylo84cTjE8-5AR1IY3gLeO_ns2ojV"
+                }
+            ]
+        },
+        {
+            "field_id": 726447,
+            "field_name": "Бриф Грузчики/Такелаж/Склад",
+            "field_code": null,
+            "field_type": "url",
+            "values": [
+                {
+                    "value": "https://forms.amocrm.ru/rdxlwrl?dp=Q1zaSQHqO-hHArUG1UMtpXwGGumRM4Frtf5Ylo84cTjE8-5AR1IY3gLeO_ns2ojV"
+                }
+            ]
+        },
+        {
+            "field_id": 729721,
+            "field_name": "Источник",
+            "field_code": null,
+            "field_type": "select",
+            "values": [
+                {
+                    "value": "2ГИС звонок",
+                    "enum_id": 691357,
+                    "enum_code": null
+                }
+            ]
+        },
+        {
+            "field_id": 477083,
+            "field_name": "Вид услуг",
+            "field_code": null,
+            "field_type": "multiselect",
+            "values": [
+                {
+                    "value": "Междугородняя перевозка",
+                    "enum_id": 286959,
+                    "enum_code": null
+                }
+            ]
+        },
+        {
+            "field_id": 726059,
+            "field_name": "Предварительная маржинальность",
+            "field_code": null,
+            "field_type": "select",
+            "values": [
+                {
+                    "value": "До 10 тыс",
+                    "enum_id": 687453,
+                    "enum_code": null
+                }
+            ]
+        },
+        {
+            "field_id": 726133,
+            "field_name": "Срочность",
+            "field_code": null,
+            "field_type": "select",
+            "values": [
+                {
+                    "value": "В течение недели",
+                    "enum_id": 687531,
+                    "enum_code": null
+                }
+            ]
+        },
+        {
+            "field_id": 726399,
+            "field_name": "Взяли в работу",
+            "field_code": null,
+            "field_type": "checkbox",
+            "values": [
+                {
+                    "value": true
+                }
+            ]
+        },
+        {
+            "field_id": 726921,
+            "field_name": "Взяли в работу",
+            "field_code": null,
+            "field_type": "checkbox",
+            "values": [
+                {
+                    "value": true
+                }
+            ]
+        },
+        {
+            "field_id": 726903,
+            "field_name": "Дата квалифицирован",
+            "field_code": null,
+            "field_type": "date",
+            "values": [
+                {
+                    "value": 1789938000
+                }
+            ]
+        },
+        {
+            "field_id": 726923,
+            "field_name": "Квалифицирован",
+            "field_code": null,
+            "field_type": "checkbox",
+            "values": [
+                {
+                    "value": true
+                }
+            ]
+        },
+        {
+            "field_id": 726901,
+            "field_name": "Дата взяли в работу",
+            "field_code": null,
+            "field_type": "date",
+            "values": [
+                {
+                    "value": 1789938000
+                }
+            ]
+        },
+        {
+            "field_id": 726897,
+            "field_name": "Дата создания",
+            "field_code": null,
+            "field_type": "date",
+            "values": [
+                {
+                    "value": 1789938000
+                }
+            ]
+        },
+        {
+            "field_id": 443939,
+            "field_name": "Характер груза",
+            "field_code": null,
+            "field_type": "textarea",
+            "values": [
+                {
+                    "value": "септик"
+                }
+            ]
+        },
+        {
+            "field_id": 700997,
+            "field_name": "Стоимость груза",
+            "field_code": null,
+            "field_type": "numeric",
+            "values": [
+                {
+                    "value": "0"
+                }
+            ]
+        },
+        {
+            "field_id": 726163,
+            "field_name": "Габариты места",
+            "field_code": null,
+            "field_type": "textarea",
+            "values": [
+                {
+                    "value": "0"
+                }
+            ]
+        },
+        {
+            "field_id": 443943,
+            "field_name": "Вес, кг",
+            "field_code": null,
+            "field_type": "numeric",
+            "values": [
+                {
+                    "value": "0"
+                }
+            ]
+        },
+        {
+            "field_id": 443945,
+            "field_name": "Объём, м3",
+            "field_code": null,
+            "field_type": "numeric",
+            "values": [
+                {
+                    "value": "0"
+                }
+            ]
+        },
+        {
+            "field_id": 726289,
+            "field_name": "Требуемые ресурсы",
+            "field_code": null,
+            "field_type": "multiselect",
+            "values": [
+                {
+                    "value": "Газель",
+                    "enum_id": 687691,
+                    "enum_code": null
+                }
+            ]
+        },
+        {
+            "field_id": 726035,
+            "field_name": "Маршрут перевозки",
+            "field_code": null,
+            "field_type": "textarea",
+            "values": [
+                {
+                    "value": "0"
+                }
+            ]
+        },
+        {
+            "field_id": 726049,
+            "field_name": "Дата и время загрузки",
+            "field_code": null,
+            "field_type": "date_time",
+            "values": [
+                {
+                    "value": 1790318460
+                }
+            ]
+        },
+        {
+            "field_id": 443761,
+            "field_name": "Точка А/Адрес загрузки",
+            "field_code": null,
+            "field_type": "streetaddress",
+            "values": [
+                {
+                    "value": "0"
+                }
+            ]
+        },
+        {
+            "field_id": 620789,
+            "field_name": "Дата и время разгрузки",
+            "field_code": null,
+            "field_type": "date_time",
+            "values": [
+                {
+                    "value": 1790318460
+                }
+            ]
+        },
+        {
+            "field_id": 443765,
+            "field_name": "Точка Б/Адрес разгрузки (работ)",
+            "field_code": null,
+            "field_type": "streetaddress",
+            "values": [
+                {
+                    "value": "0"
+                }
+            ]
+        },
+        {
+            "field_id": 726053,
+            "field_name": "Общая сумма",
+            "field_code": null,
+            "field_type": "numeric",
+            "values": [
+                {
+                    "value": "62000"
+                }
+            ]
+        },
+        {
+            "field_id": 726295,
+            "field_name": "Требуемое кол-во грузчиков",
+            "field_code": null,
+            "field_type": "numeric",
+            "values": [
+                {
+                    "value": "0"
+                }
+            ]
+        },
+        {
+            "field_id": 726297,
+            "field_name": "Ставка грузчикам",
+            "field_code": null,
+            "field_type": "numeric",
+            "values": [
+                {
+                    "value": "0"
+                }
+            ]
+        },
+        {
+            "field_id": 726905,
+            "field_name": "Дата запрос направлен исполнителям",
+            "field_code": null,
+            "field_type": "date",
+            "values": [
+                {
+                    "value": 1790110800
+                }
+            ]
+        },
+        {
+            "field_id": 726925,
+            "field_name": "Запрос направлен исполнителям",
+            "field_code": null,
+            "field_type": "checkbox",
+            "values": [
+                {
+                    "value": true
+                }
+            ]
+        },
+        {
+            "field_id": 726927,
+            "field_name": "Ставка получена",
+            "field_code": null,
+            "field_type": "checkbox",
+            "values": [
+                {
+                    "value": true
+                }
+            ]
+        },
+        {
+            "field_id": 726907,
+            "field_name": "Дата ставка получена",
+            "field_code": null,
+            "field_type": "date",
+            "values": [
+                {
+                    "value": 1790110800
+                }
+            ]
+        },
+        {
+            "field_id": 726929,
+            "field_name": "КП отправлено",
+            "field_code": null,
+            "field_type": "checkbox",
+            "values": [
+                {
+                    "value": true
+                }
+            ]
+        },
+        {
+            "field_id": 726909,
+            "field_name": "Дата КП отправлено",
+            "field_code": null,
+            "field_type": "date",
+            "values": [
+                {
+                    "value": 1790110800
+                }
+            ]
+        }
+    ],
+    "score": null,
+    "account_id": 30078538,
+    "labor_cost": null,
+    "_links": {
+        "self": {
+            "href": "https://tkdvina.amocrm.ru/api/v4/leads/29149479?with=source&page=1&limit=250"
+        }
+    },
+    "_embedded": {
+        "tags": [],
+        "source": {
+            "id": 23486243,
+            "name": "Сипуни"
+        },
+        "companies": []
+    }
+}

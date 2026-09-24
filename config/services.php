@@ -34,5 +34,9 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+    'amocrm' => [
+        'base_domain' => env('AMO_BASE_DOMAIN', 'tkdvina.amocrm.ru'),
+        'token'       => env('AMO_LONG_LIVED_TOKEN'),
+    ]
 
 ];

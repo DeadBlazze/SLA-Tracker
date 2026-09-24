@@ -1,0 +1,18 @@
+{
+ "account": {
+  "subdomain": "tkdvina",
+  "id": "30078538",
+  "_links": {
+   "self": "https://tkdvina.amocrm.ru"
+  }
+ },
+ "leads": {
+  "delete": {
+   "0": {
+    "id": "29152257",
+    "status_id": "73140338",
+    "pipeline_id": "9088966"
+   }
+  }
+ }
+}

@@ -1,0 +1,170 @@
+{
+    "id": 29157457,
+    "name": "Контакт 79021904421, входящий успешный",
+    "price": 0,
+    "price_with_minor_units": 0.0,
+    "responsible_user_id": 8047297,
+    "group_id": 0,
+    "status_id": 143,
+    "pipeline_id": 9088966,
+    "loss_reason_id": null,
+    "created_by": 0,
+    "updated_by": 0,
+    "created_at": 1790161059,
+    "updated_at": 1790161123,
+    "closed_at": 1790161120,
+    "closest_task_at": null,
+    "is_deleted": false,
+    "custom_fields_values": [
+        {
+            "field_id": 410463,
+            "field_name": "Source phone",
+            "field_code": null,
+            "field_type": "text",
+            "values": [
+                {
+                    "value": "+79210812077"
+                }
+            ]
+        },
+        {
+            "field_id": 726055,
+            "field_name": "Общая себестоимость",
+            "field_code": null,
+            "field_type": "numeric",
+            "values": [
+                {
+                    "value": "0"
+                }
+            ]
+        },
+        {
+            "field_id": 726899,
+            "field_name": "Дата телефон получен",
+            "field_code": null,
+            "field_type": "date",
+            "values": [
+                {
+                    "value": 1790110800
+                }
+            ]
+        },
+        {
+            "field_id": 726919,
+            "field_name": "Телефон получен",
+            "field_code": null,
+            "field_type": "checkbox",
+            "values": [
+                {
+                    "value": true
+                }
+            ]
+        },
+        {
+            "field_id": 726551,
+            "field_name": "ID для склейки",
+            "field_code": null,
+            "field_type": "numeric",
+            "values": [
+                {
+                    "value": "29157457"
+                }
+            ]
+        },
+        {
+            "field_id": 726449,
+            "field_name": "Бриф Перевозка грузов",
+            "field_code": null,
+            "field_type": "url",
+            "values": [
+                {
+                    "value": "https://forms.amocrm.ru/rdzwlvv?dp=Q1zaSQHqO-hHArUG1UMtpXwGGumRM4Frtf5Ylo84cThWbkOeZtIelZMLPAasJFpf"
+                }
+            ]
+        },
+        {
+            "field_id": 726197,
+            "field_name": "Бриф Аренда спецтехники",
+            "field_code": null,
+            "field_type": "url",
+            "values": [
+                {
+                    "value": "https://forms.amocrm.ru/rdxlwlc?dp=Q1zaSQHqO-hHArUG1UMtpXwGGumRM4Frtf5Ylo84cThWbkOeZtIelZMLPAasJFpf"
+                }
+            ]
+        },
+        {
+            "field_id": 726447,
+            "field_name": "Бриф Грузчики/Такелаж/Склад",
+            "field_code": null,
+            "field_type": "url",
+            "values": [
+                {
+                    "value": "https://forms.amocrm.ru/rdxlwrl?dp=Q1zaSQHqO-hHArUG1UMtpXwGGumRM4Frtf5Ylo84cThWbkOeZtIelZMLPAasJFpf"
+                }
+            ]
+        },
+        {
+            "field_id": 726121,
+            "field_name": "Причина отказа",
+            "field_code": null,
+            "field_type": "select",
+            "values": [
+                {
+                    "value": "Не оказываем такую услугу",
+                    "enum_id": 687527,
+                    "enum_code": null
+                }
+            ]
+        },
+        {
+            "field_id": 726939,
+            "field_name": "Отказ",
+            "field_code": null,
+            "field_type": "checkbox",
+            "values": [
+                {
+                    "value": true
+                }
+            ]
+        },
+        {
+            "field_id": 726921,
+            "field_name": "Взяли в работу",
+            "field_code": null,
+            "field_type": "checkbox",
+            "values": [
+                {
+                    "value": true
+                }
+            ]
+        },
+        {
+            "field_id": 726399,
+            "field_name": "Взяли в работу",
+            "field_code": null,
+            "field_type": "checkbox",
+            "values": [
+                {
+                    "value": true
+                }
+            ]
+        }
+    ],
+    "score": null,
+    "account_id": 30078538,
+    "labor_cost": null,
+    "_links": {
+        "self": {
+            "href": "https://tkdvina.amocrm.ru/api/v4/leads/29157457?with=source&page=1&limit=250"
+        }
+    },
+    "_embedded": {
+        "tags": [],
+        "source": {
+            "id": 10087771,
+            "name": "Виртуальная АТС МегаФон"
+        },
+        "companies": []
+    }
+}

@@ -1,0 +1,29 @@
+{
+ "account": {
+  "subdomain": "tkdvina",
+  "id": "30078538",
+  "_links": {
+   "self": "https://tkdvina.amocrm.ru"
+  }
+ },
+ "leads": {
+  "add": {
+   "0": {
+    "id": "29160685",
+    "name": "Автосделка: 24.09.26 село Новая Усмань, Воронежская обл. - г. Котлас",
+    "status_id": "73139726",
+    "price": "0",
+    "price_with_minor_units": "0",
+    "responsible_user_id": "8047297",
+    "last_modified": "1790240446",
+    "modified_user_id": "0",
+    "created_user_id": "0",
+    "date_create": "1790240446",
+    "pipeline_id": "9088982",
+    "account_id": "30078538",
+    "created_at": "1790240446",
+    "updated_at": "1790240446"
+   }
+  }
+ }
+}

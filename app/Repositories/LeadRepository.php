@@ -1,0 +1,10 @@
+<?php
+namespace App\Repositories;
+use Illuminate\Support\Facades\DB;
+use App\Models\Lead;
+
+class LeadRepository{
+    public function add($data){
+        
+    }
+}
