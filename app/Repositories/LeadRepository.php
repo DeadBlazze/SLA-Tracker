@@ -8,4 +8,7 @@ class LeadRepository{
         $result = Lead::updateOrInsert($data);
         return $result;
     }
+    public function updateStatus($data){
+        
+    }
 }

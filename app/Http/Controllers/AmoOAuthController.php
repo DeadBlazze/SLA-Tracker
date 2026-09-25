@@ -10,20 +10,7 @@ class AmoOAuthController {
     public function callback(Request $request){
         $leads = $request->input('leads');
         $leadKey = null;
-        foreach($leads as $key => $value){
-            $leadKey = $key;
-        }
-        switch ($leadKey){
-            case 'status': $updateAction->handle($leads[0]);
-                break;
-            case 'add' : $addLeadAction->handle($leads[0]);
-                break;
-            case 'delete': $deleteLeadAction->handle($leads[0]);
-                break;
-            default:
-                return response()->json(["error"=>"неизвестный вебхук"], 200);
-                error_log($leadKey);
-        }
+        error_log(123);
         return response(123, 200);
     }
 }
