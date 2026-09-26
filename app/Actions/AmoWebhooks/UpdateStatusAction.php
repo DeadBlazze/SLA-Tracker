@@ -10,85 +10,81 @@ class UpdateStatusAction{
     public function __construct(
         private LeadRepository $leads
     ) {}
+    private const PIPELINES_ORDER = [
+        9088966, // 1. Сначала идет «Квалификация v.1»
+        9089018, // 2. Затем «Заказы v.1»
+    ];
+
     private const TRACKED_PIPELINES_STATUSES = [
-        // Слева amo_source_id справа custom_field_id
-        [
-            "id" => 9088966,
-            "name" => "Квалификация v.1",
-            "statuses" => [
-                [
-                    "id"=> 73140342,
-                    "pipeline_id"=> 9088966,
-                    "target_custom_id" => 
-                    "name"=> "Взяли в работу"
-                ],
-                [
-                    "id"=> 143,
-                    "pipeline_id"=> 9088966,
-                    "name"=> "Закрыто и не реализовано",
-                ]
-            ]
+        // 1. Квалификация v.1
+        9088966 => [
+            73140342 => 732013, // Взяли в работу
         ],
-        [
-            "id"=> 9089018,
-            "name"=> "Заказы v.1",
-            "statuses" => [ 
-                [
-                    "id"=> 73140050,
-                    "name"=> "Квалифицирован",
-                    "pipeline_id"=> 9089018
-                ],
-                [
-                    "id"=> 73249794,
-                    "name"=> "КП отправлено",
-                    "pipeline_id" => 9089018
-                ],
-                [
-                    "id"=> 73140058,
-                    "name"=> "Данные исполнителю отправлены",
-                ],
-                [
-                    "id"=> 73143094,
-                    "name"=> "24 час до реализации",
-                ],
-                [
-                    "id"=> 73143098,
-                    "name"=> "Начали реализацию"
-                ],
-                [
-                    "id"=> 73143102,
-                    "name"=> "Закончили реализацию",
-                ],
-                [
-                    "id"=> 142,
-                    "name"=> "Успешно реализовано",
-                ],
-                [
-                    "id"=> 143,
-                    "name"=> "Закрыто и не реализовано",
-                ]
-            ]
-        ]
+
+        // 2. Заказы v.1
+        9089018 => [
+            73140050 => 731999, // Квалифицирован
+            73249794 => 731997, // КП отправлено
+            73140058 => 732001, // Данные исполнителю отправлены
+            73143094 => 732003, // 24 час до реализации
+            73143098 => 732005, // Начали реализацию
+            73143102 => 732007, // Закончили реализацию
+            142      => 732009, // Успешно реализовано
+            143      => 732011, // Закрыто и не реализовано
+        ],
     ];
     public function handle($lead){
         $leadId = (int) $lead['id'];
+        $currentPipelineId = (int) ($lead['pipeline_id'] ?? 0);
         $currentStatusId = (int) $lead['status_id'];
-        $pipelineId = (int) ($lead['pipeline_id'] ?? 0);
         $now = Carbon::now('UTC');
         $timestamp = $now->timestamp;
+
+        // Если воронки нет в цепочке пайплайнов — просто пишем в БД и выходим
+        $currentPipelineIndex = array_search($currentPipelineId, self::PIPELINES_ORDER, true);
+
+        if ($currentPipelineIndex === false) {
+            // $this->leads->updateStatus($leadId, $currentStatusId, $currentPipelineId);
+            return;
+        }
+
         $filledFieldIds = $this->extractFilledCustomFieldIds($lead);
+        $fieldsToPatch = [];
         
-        // 2. Проходим цепочку шагов от первого до текущего статуса
-        foreach (self::PIPELINE_STEPS as $stepStatusId => $targetFieldId) {
-            if (! in_array($targetFieldId, $filledFieldIds, true)) {
-                $fieldsToPatch[] = [
-                    'field_id' => $targetFieldId,
-                    'values'   => [
-                        ['value' => $timestamp]
-                    ]
-                ];
+        // 1. Проверяем все предшествующие воронки и текущую
+        foreach (self::PIPELINES_ORDER as $index => $pipelineId) {
+            // Воронки, идущие позже текущей, вообще не трогаем
+            if ($index > $currentPipelineIndex) {
+                break;
             }
-            if($stepStatusId === $lead['status_id']) break;
+
+            $steps = self::TRACKED_PIPELINES_STATUSES[$pipelineId] ?? [];
+            $isCurrentPipeline = ($pipelineId === $currentPipelineId);
+
+            foreach ($steps as $stepStatusId => $targetFieldId) {
+                // Если в вебхуке поле не заполнено — закрываем его
+                if (! in_array($targetFieldId, $filledFieldIds, true)) {
+                    $fieldsToPatch[] = [
+                        'field_id' => $targetFieldId,
+                        'values'   => [
+                            ['value' => $now->timestamp]
+                        ]
+                    ];
+
+                    $logsToInsert[] = [
+                        'amo_lead_id' => $leadId,
+                        'status_id'   => $stepStatusId,
+                        'pipeline_id' => $pipelineId,
+                        'created_at'  => $now->toDateTimeString(),
+                        'updated_at'  => $now->toDateTimeString(),
+                    ];
+                }
+
+                // Если это ТЕКУЩАЯ воронка и мы дошли до текущего статуса — прерываемся
+                if ($isCurrentPipeline && $stepStatusId === $currentStatusId) {
+                    break;
+                }
+            }
         }
         // $fieldId = self::STATUS_FIELD_MAP[$lead['status_id']] ?? null;
         // if ($fieldId === null) {
