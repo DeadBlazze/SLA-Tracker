@@ -6,7 +6,7 @@ use App\Http\Controllers\AmoOAuthController;
 use App\Http\Controllers\AmoWebhookController;
 
 
-Route::get('/', fn () => phpinfo());
+Route::get('/', fn () => response()->json(['Данный enpoint не поддерживается в настоящее время']));
 
 Route::post('/oauth/callback', [AmoOAuthController::class, 'callback']);
 
