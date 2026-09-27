@@ -1,16 +1,27 @@
 <?php
-namespace App\Actions\AmoWebhooks;
 
-use Illuminate\Support\Facades\Log;
-use App\Jobs\updateLeadStatusJob;
+namespace App\Jobs;
+
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
 use App\Repositories\LeadRepository;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 
-class UpdateStatusAction{
+class updateLeadStatusJob implements ShouldQueue
+{
+    use Queueable;
+
+    /**
+     * Create a new job instance.
+     */
     public function __construct(
-        private LeadRepository $lead
-    ) {}
+        public array $lead
+    ){}
+
+    /**
+     * Execute the job.
+     */
     private const PIPELINES_ORDER = [
         9088966, // 1. Сначала идет «Квалификация v.1»
         9089018, // 2. Затем «Заказы v.1»
@@ -34,15 +45,11 @@ class UpdateStatusAction{
             143      => 732011, // Закрыто и не реализовано
         ]
     ]; 
-    
-    public function handle($lead){
-        $leadId = !empty($lead['id']) ? (int) $lead['id'] : null;
-        if(!$leadId) return Log::warning('AmoWebhook: Lead payload without valid ID', ['payload' => $lead]);
-        
+    public function handle(): void
+    {
+        $lead = $this->lead;
         $currentPipelineId = (int) $lead['pipeline_id'] ?? 0;
         $currentStatusId = (int) $lead['status_id'];
-        $oldStatusId = $lead['old_status_id'] ?? null;
-        $statusChanged = ($oldStatusId !== $currentStatusId);
         $now = Carbon::now('UTC');
 
         // Если воронки нет в цепочке пайплайнов — просто пишем в БД и выходим
@@ -51,28 +58,6 @@ class UpdateStatusAction{
         if ($currentPipelineIndex === false) {
             // $this->leads->updateStatus($leadId, $currentStatusId, $currentPipelineId);
             return;
-        }
-
-        // 1. Целевой статус: пишем сразу, если был реальный переход
-        $targetCustomFieldId = self::TRACKED_PIPELINES_STATUSES[$currentPipelineId][$currentStatusId] ?? null;
-
-        if ($statusChanged && $targetCustomFieldId) {
-            $fieldsToPatch[] = [
-                'field_id' => $targetCustomFieldId,
-                'values'   => [
-                    ['value' => $now->timestamp],
-                ],
-            ];
-
-            $logsToInsert[] = [
-                'amo_lead_id'         => $lead['id'],
-                'pipeline_id'         => $currentPipelineId,
-                'old_status_id'       => $oldStatusId,
-                'status_id'           => $currentStatusId,
-                'user_id'             => $lead['modified_user_id'] ?? null,
-                'responsible_user_id' => $lead['responsible_user_id'] ?? null,
-                'entered_at'          => $now->toDateTimeString(),
-            ];
         }
 
         $filledFieldIds = $this->extractFilledCustomFieldIds($lead);
@@ -89,28 +74,29 @@ class UpdateStatusAction{
             $isCurrentPipeline = ($pipelineId === $currentPipelineId);
 
             foreach ($steps as $stepStatusId => $customFieldId) {
-                // Дошли до текущего статуса — дальше не идем (текущий уже обработан выше)
-                if ($isCurrentPipeline && $stepStatusId === $currentStatusId) {
-                    break;
-                }    
-                // Проверяем только пропущенные шаги
+                // Если в вебхуке поле не заполнено — закрываем его
                 if (! in_array($customFieldId, $filledFieldIds, true)) {
                     $fieldsToPatch[] = [
                         'field_id' => $customFieldId,
                         'values'   => [
-                            ['value' => $now->timestamp],
-                        ],
+                            ['value' => $now->timestamp]
+                        ]
                     ];
 
                     $logsToInsert[] = [
-                        'amo_lead_id'         => $lead['id'],
-                        'pipeline_id'         => $pipelineId,
-                        'old_status_id'       => $oldStatusId,
-                        'status_id'           => $stepStatusId,
-                        'user_id'             => $lead['modified_user_id'] ?? null,
-                        'responsible_user_id' => $lead['responsible_user_id'] ?? null,
-                        'entered_at'          => $now->toDateTimeString(),
+                        'amo_lead_id' => $lead['id'],
+                        'pipeline_id' => $pipelineId,
+                        'old_status_id' => $lead['old_status_id'] ?? null,
+                        'status_id'   => $stepStatusId,
+                        'user_id' => $lead['modified_user_id'],
+                        "responsible_user_id" => $lead['responsible_user_id'],
+                        'entered_at'  => $now->toDateTimeString()
                     ];
+                }
+
+                // Если это ТЕКУЩАЯ воронка и мы дошли до текущего статуса — прерываемся
+                if ($isCurrentPipeline && $stepStatusId === $currentStatusId) {
+                    break;
                 }
             }
         }
@@ -124,7 +110,7 @@ class UpdateStatusAction{
         ]);
 
         // Обновляем Дата Время создания
-        $response = $client->patch("/api/v4/leads/{$lead['id']}", [
+        $client->patch("/api/v4/leads/{$lead['id']}", [
             'headers' => [
                 'Authorization' => "Bearer {$token}",
             ],
@@ -132,8 +118,6 @@ class UpdateStatusAction{
                 'custom_fields_values' => $fieldsToPatch
             ]
         ]);
-        error_log(123);
-        // updateLeadStatusJob::dispatch($lead);
     }
     private function extractFilledCustomFieldIds(array $lead): array
     {
@@ -144,7 +128,7 @@ class UpdateStatusAction{
             $fieldId = (int) ($field['id'] ?? 0);
             
             // Проверяем, что значение действительно существует и не пустое
-            $hasValue = ! empty($field['values'][0]);
+            $hasValue = ! empty($field['values'][0]['value']);
 
             if ($fieldId > 0 && $hasValue) {
                 $filledIds[] = $fieldId;
