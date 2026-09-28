@@ -4,12 +4,14 @@ namespace App\Actions\AmoWebhooks;
 use Illuminate\Support\Facades\Log;
 use App\Jobs\updateLeadStatusJob;
 use App\Repositories\LeadRepository;
+use App\Repositories\LeadStatusLogRepository;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 
 class UpdateStatusAction{
     public function __construct(
-        private LeadRepository $lead
+        private LeadRepository $leads,
+        private LeadStatusLogRepository $leadStatusLogs
     ) {}
     private const PIPELINES_ORDER = [
         9088966, // 1. Сначала идет «Квалификация v.1»
@@ -42,20 +44,45 @@ class UpdateStatusAction{
         $currentPipelineId = (int) $lead['pipeline_id'] ?? 0;
         $currentStatusId = (int) $lead['status_id'];
         $oldStatusId = $lead['old_status_id'] ?? null;
-        $statusChanged = ($oldStatusId !== $currentStatusId);
         $now = Carbon::now('UTC');
+
+        // Data for DB
+        $fieldsById = array_column($lead['custom_fields'] ?? [], null, 'id');
+        $netProfit = $fieldsById[685511]['values'][0]['value'] ?? 0;
+        $leadUpdateData = [
+            "amo_lead_id" => $lead['id'],
+            "status_id" => $lead['status_id'],
+            "old_status_id" => $lead['old_status_id'] ?? null,
+            "net_profit" => $netProfit
+        ];
+        $logsToInsert = [[
+            'amo_lead_id'         => $lead['id'],
+            'pipeline_id'         => $currentPipelineId,
+            'old_status_id'       => $oldStatusId,
+            'status_id'           => $currentStatusId,
+            'user_id'             => $lead['modified_user_id'] ?? null,
+            'responsible_user_id' => $lead['responsible_user_id'] ?? null,
+            'entered_at'          => $lead['updated_at'] ?? $now->toDateTimeString(),
+        ]];
+
 
         // Если воронки нет в цепочке пайплайнов — просто пишем в БД и выходим
         $currentPipelineIndex = array_search($currentPipelineId, self::PIPELINES_ORDER, true);
-
         if ($currentPipelineIndex === false) {
+            $this->leads->update($leadUpdateData);
             // $this->leads->updateStatus($leadId, $currentStatusId, $currentPipelineId);
+            error_log(123);
             return;
         }
 
-        // 1. Целевой статус: пишем сразу, если был реальный переход
-        $targetCustomFieldId = self::TRACKED_PIPELINES_STATUSES[$currentPipelineId][$currentStatusId] ?? null;
+        // ИНИЦИАЛИЗАЦИЯ НАКОПИТЕЛЕЙ
+        $fieldsToPatch = [];
+        $filledFieldIds = $this->extractFilledCustomFieldIds($lead);
+        
 
+        // Целевой статус: пишем сразу, если был реальный переход
+        $statusChanged = ($oldStatusId !== $currentStatusId);
+        $targetCustomFieldId = self::TRACKED_PIPELINES_STATUSES[$currentPipelineId][$currentStatusId] ?? null;
         if ($statusChanged && $targetCustomFieldId) {
             $fieldsToPatch[] = [
                 'field_id' => $targetCustomFieldId,
@@ -63,7 +90,7 @@ class UpdateStatusAction{
                     ['value' => $now->timestamp],
                 ],
             ];
-
+        }else{
             $logsToInsert[] = [
                 'amo_lead_id'         => $lead['id'],
                 'pipeline_id'         => $currentPipelineId,
@@ -71,14 +98,13 @@ class UpdateStatusAction{
                 'status_id'           => $currentStatusId,
                 'user_id'             => $lead['modified_user_id'] ?? null,
                 'responsible_user_id' => $lead['responsible_user_id'] ?? null,
-                'entered_at'          => $now->toDateTimeString(),
+                'entered_at'          => $lead['updated_at'] ?? $now->toDateTimeString(),
             ];
+            // $this->leads->updateStatus();
+            return;
         }
-
-        $filledFieldIds = $this->extractFilledCustomFieldIds($lead);
-        $fieldsToPatch = [];
         
-        // 1. Проверяем все предшествующие воронки и текущую
+        // НАВЕРСТЫВАНИЕ ПРОПУЩЕННЫХ ШАГОВ
         foreach (self::PIPELINES_ORDER as $index => $pipelineId) {
             // Воронки, идущие позже текущей, вообще не трогаем
             if ($index > $currentPipelineIndex) {
@@ -123,7 +149,7 @@ class UpdateStatusAction{
             'timeout'  => 5.0
         ]);
 
-        // Обновляем Дата Время создания
+        // Patch amo Дата Время создания
         $response = $client->patch("/api/v4/leads/{$lead['id']}", [
             'headers' => [
                 'Authorization' => "Bearer {$token}",
@@ -132,7 +158,14 @@ class UpdateStatusAction{
                 'custom_fields_values' => $fieldsToPatch
             ]
         ]);
-        error_log(123);
+
+        // Пишем в базу
+        if($response->getStatusCode() === 200){
+            $result0 = $this->leads->update($leadUpdateData);
+            $result = $this->leadStatusLogs->add($logsToInsert);
+            error_log('32w1');
+        }
+        error_log(132);
         // updateLeadStatusJob::dispatch($lead);
     }
     private function extractFilledCustomFieldIds(array $lead): array

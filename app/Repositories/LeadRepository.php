@@ -8,7 +8,8 @@ class LeadRepository{
         $result = Lead::updateOrInsert($data);
         return $result;
     }
-    public function updateStatus($data){
-        
+    public function update($data){
+        $result = Lead::where("amo_lead_id",$data['amo_lead_id'])->update($data);
+        return $result;
     }
 }
