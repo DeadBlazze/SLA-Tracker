@@ -7,11 +7,14 @@ use App\Repositories\LeadRepository;
 use App\Repositories\LeadStatusLogRepository;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
+use App\Services\amoCRM\ResolveLeadSourceService;
+
 
 class UpdateStatusAction{
     public function __construct(
         private LeadRepository $leads,
-        private LeadStatusLogRepository $leadStatusLogs
+        private LeadStatusLogRepository $leadStatusLogs,
+        private ResolveLeadSourceService $leadSourceResolver
     ) {}
     private const PIPELINES_ORDER = [
         9088966, // 1. Сначала идет «Квалификация v.1»
@@ -45,38 +48,64 @@ class UpdateStatusAction{
         $currentStatusId = (int) $lead['status_id'];
         $oldStatusId = $lead['old_status_id'] ?? null;
         $now = Carbon::now('UTC');
-
-        // Data for DB
-        $fieldsById = array_column($lead['custom_fields'] ?? [], null, 'id');
-        $netProfit = $fieldsById[685511]['values'][0]['value'] ?? 0;
-        $leadUpdateData = [
+        
+        $amoFieldsToUpdate = [];
+        $dbLeadData = [
             "amo_lead_id" => $lead['id'],
             "status_id" => $lead['status_id'],
-            "old_status_id" => $lead['old_status_id'] ?? null,
-            "net_profit" => $netProfit
+            "old_status_id" => $lead['old_status_id'] ?? null
         ];
-        $logsToInsert = [[
+        $dbStatusLogs = [[
             'amo_lead_id'         => $lead['id'],
             'pipeline_id'         => $currentPipelineId,
             'old_status_id'       => $oldStatusId,
             'status_id'           => $currentStatusId,
             'user_id'             => $lead['modified_user_id'] ?? null,
             'responsible_user_id' => $lead['responsible_user_id'] ?? null,
-            'entered_at'          => $lead['updated_at'] ?? $now->toDateTimeString(),
+            'entered_at'          => Carbon::createFromTimestamp($lead['entered_at'] ?? $now->timestamp),
+            'created_at'          => $now->toDateTimeString()
         ]];
+
+
+        // Data for DB
+        $customFields = [];
+        foreach($lead['custom_fields'] ?? [] as $field){
+            $fieldId = $field['id'];
+            $customFields[$field['id']] = [
+                $field['values'][0] ?? null
+            ];
+        }
+        $dbLeadData['net_profit'] = $customFields[685511] ?? 0;
+
+        $promo_source = [
+            "promo_source_name" => $customFields[729721][0]['value'] ?? null,
+            "promo_source_enum_id" => (int) ($customFields[729721][0]['enum'] ?? 0)
+        ];
+        if(!$promo_source["promo_source_enum_id"]){
+            $promo_source = $this->leadSourceResolver->get(["Source phone"=>$customFields[410463] ?? null, "Номер Sipuni"=>$customFields[729789] ?? null]);
+            if($promo_source) {
+                $amoFieldsToUpdate[] = [
+                    'field_id' => 729721,
+                    'values'   => [
+                        ['enum_id' => $promo_source['promo_source_enum_id']],
+                    ],
+                ];
+                $dbLeadData['promo_source_name'] = $promo_source['promo_source_enum_id'] ?? null;
+                $dbLeadData['promo_source_enum_id'] = $promo_source['promo_source_enum_id'] ?? null;
+            }
+        }
 
 
         // Если воронки нет в цепочке пайплайнов — просто пишем в БД и выходим
         $currentPipelineIndex = array_search($currentPipelineId, self::PIPELINES_ORDER, true);
         if ($currentPipelineIndex === false) {
-            $this->leads->update($leadUpdateData);
-            // $this->leads->updateStatus($leadId, $currentStatusId, $currentPipelineId);
+            $this->leads->update($dbLeadData);
             error_log(123);
             return;
         }
 
-        // ИНИЦИАЛИЗАЦИЯ НАКОПИТЕЛЕЙ
-        $fieldsToPatch = [];
+
+        // Обновление временных меток статусов сделки
         $filledFieldIds = $this->extractFilledCustomFieldIds($lead);
         
 
@@ -84,22 +113,13 @@ class UpdateStatusAction{
         $statusChanged = ($oldStatusId !== $currentStatusId);
         $targetCustomFieldId = self::TRACKED_PIPELINES_STATUSES[$currentPipelineId][$currentStatusId] ?? null;
         if ($statusChanged && $targetCustomFieldId) {
-            $fieldsToPatch[] = [
+            $amoFieldsToUpdate[] = [
                 'field_id' => $targetCustomFieldId,
                 'values'   => [
                     ['value' => $now->timestamp],
                 ],
             ];
         }else{
-            $logsToInsert[] = [
-                'amo_lead_id'         => $lead['id'],
-                'pipeline_id'         => $currentPipelineId,
-                'old_status_id'       => $oldStatusId,
-                'status_id'           => $currentStatusId,
-                'user_id'             => $lead['modified_user_id'] ?? null,
-                'responsible_user_id' => $lead['responsible_user_id'] ?? null,
-                'entered_at'          => $lead['updated_at'] ?? $now->toDateTimeString(),
-            ];
             // $this->leads->updateStatus();
             return;
         }
@@ -121,21 +141,22 @@ class UpdateStatusAction{
                 }    
                 // Проверяем только пропущенные шаги
                 if (! in_array($customFieldId, $filledFieldIds, true)) {
-                    $fieldsToPatch[] = [
+                    $amoFieldsToUpdate[] = [
                         'field_id' => $customFieldId,
                         'values'   => [
                             ['value' => $now->timestamp],
                         ],
                     ];
 
-                    $logsToInsert[] = [
+                    $dbStatusLogs[] = [
                         'amo_lead_id'         => $lead['id'],
                         'pipeline_id'         => $pipelineId,
                         'old_status_id'       => $oldStatusId,
                         'status_id'           => $stepStatusId,
                         'user_id'             => $lead['modified_user_id'] ?? null,
                         'responsible_user_id' => $lead['responsible_user_id'] ?? null,
-                        'entered_at'          => $now->toDateTimeString(),
+                        'entered_at'          => Carbon::createFromTimestamp($lead['entered_at'] ?? $now->timestamp),
+                        'created_at'          => $now->toDateTimeString()
                     ];
                 }
             }
@@ -155,14 +176,14 @@ class UpdateStatusAction{
                 'Authorization' => "Bearer {$token}",
             ],
             'json' => [
-                'custom_fields_values' => $fieldsToPatch
+                'custom_fields_values' => $amoFieldsToUpdate
             ]
         ]);
 
         // Пишем в базу
         if($response->getStatusCode() === 200){
-            $result0 = $this->leads->update($leadUpdateData);
-            $result = $this->leadStatusLogs->add($logsToInsert);
+            $result0 = $this->leads->update($dbLeadData);
+            $result = $this->leadStatusLogs->add($dbStatusLogs);
             error_log('32w1');
         }
         error_log(132);

@@ -5,8 +5,10 @@ use App\Models\LeadStatusLog;
 
 class LeadStatusLogRepository{
     public function add($data){
-        error_log(123);
-        $result = LeadStatusLog::create($data);
+        $result = null;
+        foreach($data as $logData){
+            $result[] = LeadStatusLog::create($logData);
+        }
         return $result;
     }
 }

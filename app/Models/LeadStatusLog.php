@@ -9,7 +9,7 @@ class LeadStatusLog extends Model
     protected $table = 'lead_status_logs';
 
     protected $fillable = [
-        'lead_id',
+        'amo_lead_id',
         'pipeline_id',
         'status_id',
         'old_status_id',
@@ -19,6 +19,6 @@ class LeadStatusLog extends Model
     ];
     protected $primaryKey = 'id';
     public $incrementing = true;
-    protected $keyType = 'bigint';
     public $timestamps = true;
+    public const UPDATED_AT = null;
 }
