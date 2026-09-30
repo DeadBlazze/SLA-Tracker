@@ -62,7 +62,7 @@ class UpdateStatusAction{
             'status_id'           => $currentStatusId,
             'user_id'             => $lead['modified_user_id'] ?? null,
             'responsible_user_id' => $lead['responsible_user_id'] ?? null,
-            'entered_at'          => Carbon::createFromTimestamp($lead['entered_at'] ?? $now->timestamp),
+            'entered_at'          => Carbon::createFromTimestamp($lead['updated_at'])->toDateTimeString() ?? $now->toDateTimeString(),
             'created_at'          => $now->toDateTimeString()
         ]];
 
@@ -70,12 +70,11 @@ class UpdateStatusAction{
         // Data for DB
         $customFields = [];
         foreach($lead['custom_fields'] ?? [] as $field){
-            $fieldId = $field['id'];
             $customFields[$field['id']] = [
                 $field['values'][0] ?? null
             ];
         }
-        $dbLeadData['net_profit'] = $customFields[685511] ?? 0;
+        $dbLeadData['net_profit'] = $customFields[685511][0]['value'] ?? 0;
 
         $promo_source = [
             "promo_source_name" => $customFields[729721][0]['value'] ?? null,
@@ -90,9 +89,14 @@ class UpdateStatusAction{
                         ['enum_id' => $promo_source['promo_source_enum_id']],
                     ],
                 ];
-                $dbLeadData['promo_source_name'] = $promo_source['promo_source_enum_id'] ?? null;
-                $dbLeadData['promo_source_enum_id'] = $promo_source['promo_source_enum_id'] ?? null;
+                $dbLeadData['promo_source_name'] = $promo_source['promo_source_enum_id'];
+                $dbLeadData['promo_source_enum_id'] = $promo_source['promo_source_enum_id'];
+                $dbLeadData['source_phone'] = $promo_source['source_phone'];
             }
+        }else{
+            $dbLeadData['promo_source_name'] = $promo_source['promo_source_name'];
+            $dbLeadData['promo_source_enum_id'] = $promo_source['promo_source_enum_id'];
+            $dbLeadData['source_phone'] = $this->leadSourceResolver->normalizePhoneNum($customFields[410463] ?? null);
         }
 
 
