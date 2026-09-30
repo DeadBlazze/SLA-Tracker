@@ -47,6 +47,7 @@ class ResolveLeadSourceService{
                     if($source['phone'] == $phone){
                         $promo_source['promo_source_name'] = $source['value'] ?? null;
                         $promo_source['promo_source_enum_id'] = $source['id'] ?? null;
+                        $promo_source['source_phone'] = $source['phone'] ?? null;
                         break 2;
                     }
                     error_log(123);
@@ -56,7 +57,7 @@ class ResolveLeadSourceService{
         }
         return $promo_source;
     }
-    private function normalizePhoneNum($phoneNum){
+    public function normalizePhoneNum($phoneNum){
         if (!$phoneNum) {
             return null;
         }
