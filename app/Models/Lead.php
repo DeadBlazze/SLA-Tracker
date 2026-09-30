@@ -14,7 +14,7 @@ class Lead extends Model
         'status_id',
         'old_status_id',
         'source_phone',
-        'promo_source',
+        'promo_source_name',
         'promo_source_enum_id',
         'amo_source_id',
         'amo_source_name',
@@ -23,6 +23,5 @@ class Lead extends Model
     ];
     protected $primaryKey = 'id';
     public $incrementing = true;
-    protected $keyType = 'bigint';
     public $timestamps = true;
 }
