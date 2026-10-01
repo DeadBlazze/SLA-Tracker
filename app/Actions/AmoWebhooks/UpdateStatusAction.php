@@ -129,8 +129,17 @@ class UpdateStatusAction{
             $this->leads->update($dbLeadData);
             return;
         }
-        
+
         // НАВЕРСТЫВАНИЕ ПРОПУЩЕННЫХ ШАГОВ
+        $flatCustomIds = [];
+        foreach(self::TRACKED_PIPELINES_STATUSES as $statuses){
+            foreach($statuses as $key => $value){
+                $flatCustomIds[] = $customFields[$value][0] ?? null;
+            }
+        }
+
+        $timestampGuide = [];
+        $flatIndex = 0;
         foreach (self::PIPELINES_ORDER as $index => $pipelineId) {
             // Воронки, идущие позже текущей, вообще не трогаем
             if ($index > $currentPipelineIndex) {
@@ -141,11 +150,14 @@ class UpdateStatusAction{
             $isCurrentPipeline = ($pipelineId === $currentPipelineId);
 
             foreach ($steps as $stepStatusId => $customFieldId) {
+                $flatIndex++;
+                if(!$flatCustomIds[$flatIndex])
                 // Дошли до текущего статуса — дальше не идем (текущий уже обработан выше)
                 if ($isCurrentPipeline && $stepStatusId === $currentStatusId) {
                     break;
                 }    
                 // Проверяем только пропущенные шаги
+                $timestampGuide[] = $customFields[$customFieldId] ?? null;
                 if (! in_array($customFieldId, $filledFieldIds, true)) {
                     $amoFieldsToUpdate[] = [
                         'field_id' => $customFieldId,
