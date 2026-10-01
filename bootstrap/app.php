@@ -7,7 +7,6 @@ use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Throwable;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -27,7 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
             fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
         );
 
-        $exceptions->report(function (Throwable $e) {
+        $exceptions->report(function (\Throwable $e) {
             $req = request();
             Log::critical('[UNHANDLED_CRASH][HTTP_500] Uncaught exception terminated request', [
                 'url'     => $req instanceof Request ? $req->fullUrl() : 'console/queue',

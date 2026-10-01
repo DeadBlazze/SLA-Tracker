@@ -54,7 +54,9 @@ class UpdateStatusAction{
         $dbLeadData = [
             "amo_lead_id" => $lead['id'],
             "status_id" => $lead['status_id'],
-            "old_status_id" => $lead['old_status_id'] ?? null
+            "old_status_id" => $lead['old_status_id'] ?? null,
+            'responsible_user_id' => $lead['responsible_user_id'] ?? null,
+            'pipeline_id'         => $currentPipelineId
         ];
         $dbStatusLogs = [[
             'amo_lead_id'         => $lead['id'],
@@ -97,7 +99,7 @@ class UpdateStatusAction{
         }else{
             $dbLeadData['promo_source_name'] = $promo_source['promo_source_name'];
             $dbLeadData['promo_source_enum_id'] = $promo_source['promo_source_enum_id'];
-            $dbLeadData['source_phone'] = $this->leadSourceResolver->normalizePhoneNum($customFields[410463] ?? null);
+            $dbLeadData['source_phone'] = $this->leadSourceResolver->normalizePhoneNum($customFields[410463][0]['value'] ?? null);
         }
 
 
@@ -124,7 +126,7 @@ class UpdateStatusAction{
                 ],
             ];
         }else{
-            // $this->leads->updateStatus();
+            $this->leads->update($dbLeadData);
             return;
         }
         
@@ -159,7 +161,7 @@ class UpdateStatusAction{
                         'status_id'           => $stepStatusId,
                         'user_id'             => $lead['modified_user_id'] ?? null,
                         'responsible_user_id' => $lead['responsible_user_id'] ?? null,
-                        'entered_at'          => Carbon::createFromTimestamp($lead['entered_at'] ?? $now->timestamp),
+                        'entered_at'          => Carbon::createFromTimestamp($lead['updated_at'] ?? $now->timestamp)->toDateTimeString(),
                         'created_at'          => $now->toDateTimeString()
                     ];
                 }
@@ -208,15 +210,11 @@ class UpdateStatusAction{
                         return;
                     }
                     $responseData = json_decode((string) $response->getBody(), true);;
-                    $fullLeadData = [
-                        "amo_lead_id" => $responseData['id'],
-                        "pipeline_id" => $responseData['pipeline_id'],
-                        "status_id" => $responseData['status_id'],
-                        "net_profit" => $dbLeadData['net_profit'],
+                    $fullLeadData = array_merge($dbLeadData, [
                         "amo_source_name" => $responseData['_embedded']['source']['name'] ?? null,
                         "amo_source_id" => $responseData['_embedded']['source']['id'] ?? null,
                         "created_at" => Carbon::createFromTimestamp($responseData['created_at'])->toDateTimeString(),
-                    ];
+                    ]);
                     DB::transaction(function () use ($fullLeadData, $dbStatusLogs) {
                         // Создаем родительскую сделку
                         $this->leads->add($fullLeadData);
