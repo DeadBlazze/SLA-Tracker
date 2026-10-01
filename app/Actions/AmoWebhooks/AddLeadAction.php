@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use GuzzleHttp\Client;
 use App\Services\amoCRM\ResolveLeadSourceService;
 use Illuminate\Support\Carbon as SupportCarbon;
+use Illuminate\Support\Facades\Log;
 
 class AddLeadAction {
     public function __construct(
@@ -26,8 +27,14 @@ class AddLeadAction {
             'Authorization' => "Bearer {$token}",
             ],
         ]);
+        $statusCode = $response->getStatusCode();
+        if ($statusCode === 204 || $statusCode === 404) {
+            // Сделка удалена или не найдена в amoCRM
+            Log::warning("Сделка {$leadId} не найдена в amoCRM (HTTP {$statusCode})");
+            return;
+        }
         $leadData = json_decode((string) $response->getBody(), true);
-        
+
 
         $amoFieldsToUpdate = [];
         $dbLeadData = [

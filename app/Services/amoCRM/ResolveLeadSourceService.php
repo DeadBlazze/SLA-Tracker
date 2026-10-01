@@ -30,8 +30,6 @@ class ResolveLeadSourceService{
             "phone" => "89532639075"
         ]
     ];
-    private $amo_lead_source = null;
-    private $amo_source_phone = null;
     public function get(array $phoneFields){
         $promo_source = [];
 
