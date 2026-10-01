@@ -8,6 +8,7 @@ use App\Repositories\LeadStatusLogRepository;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use App\Services\amoCRM\ResolveLeadSourceService;
+use Illuminate\Support\Facades\DB;
 
 
 class UpdateStatusAction{
@@ -109,7 +110,6 @@ class UpdateStatusAction{
         }
 
 
-        // Обновление временных меток статусов сделки
         $filledFieldIds = $this->extractFilledCustomFieldIds($lead);
         
 
@@ -186,11 +186,48 @@ class UpdateStatusAction{
 
         // Пишем в базу
         if($response->getStatusCode() === 200){
-            $result0 = $this->leads->update($dbLeadData);
-            $result = $this->leadStatusLogs->add($dbStatusLogs);
-            error_log('32w1');
+            // Обработка ошибки добавления лога по внешнему ключу на amo_lead_id
+            try{
+                DB::transaction(function () use ($dbLeadData, $dbStatusLogs) {
+                    $result = $this->leadStatusLogs->add($dbStatusLogs);
+                    $result0 = $this->leads->update($dbLeadData);
+                });
+            }catch(\Illuminate\Database\QueryException $e){
+                if (isset($e->errorInfo[1]) && (int) $e->errorInfo[1] === 1452) {
+                    // Сделки нет в БД -> идём в amoCRM API за полными данными
+                    $response = $client->get("/api/v4/leads/{$leadId}?with=source", [
+                        'headers' => [
+                        'Authorization' => "Bearer {$token}",
+                        ],
+                    ]);
+                    if ($response->getStatusCode() !== 200) {
+                        Log::error("[HANDLED_ERROR][HTTP_200] AmoWebhook: Failed to fetch lead {$leadId} from API", [
+                            'status' => $response->getStatusCode(),
+                            'body'   => (string) $response->getBody()
+                        ]);
+                        return;
+                    }
+                    $responseData = json_decode((string) $response->getBody(), true);;
+                    $fullLeadData = [
+                        "amo_lead_id" => $responseData['id'],
+                        "pipeline_id" => $responseData['pipeline_id'],
+                        "status_id" => $responseData['status_id'],
+                        "net_profit" => $dbLeadData['net_profit'],
+                        "amo_source_name" => $responseData['_embedded']['source']['name'] ?? null,
+                        "amo_source_id" => $responseData['_embedded']['source']['id'] ?? null,
+                        "created_at" => Carbon::createFromTimestamp($responseData['created_at'])->toDateTimeString(),
+                    ];
+                    DB::transaction(function () use ($fullLeadData, $dbStatusLogs) {
+                        // Создаем родительскую сделку
+                        $this->leads->add($fullLeadData);
+                        $this->leadStatusLogs->add($dbStatusLogs);
+                    });
+                }else {
+                    // Любая другая ошибка базы должна валиться дальше
+                    throw $e;
+                }
+            }
         }
-        error_log(132);
         // updateLeadStatusJob::dispatch($lead);
     }
     private function extractFilledCustomFieldIds(array $lead): array
