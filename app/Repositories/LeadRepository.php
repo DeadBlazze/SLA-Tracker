@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Lead;
 
 class LeadRepository{
-    public function add($data){
+    public function updateOrInsert($data){
         $result = Lead::updateOrInsert($data);
         return $result;
     }

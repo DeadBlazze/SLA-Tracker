@@ -126,7 +126,8 @@ class UpdateStatusAction{
         $flatCustomFields = [];
         foreach(self::TRACKED_PIPELINES_STATUSES as $statuses){
             foreach($statuses as $key => $value){
-                $flatCustomFields[] = [$customFields[$value][0] ?? null, $value];
+                $dateTime = !empty($customFields[$value][0]) ? Carbon::createFromTimestamp($customFields[$value][0])->toIso8601String() : null;
+                $flatCustomFields[] = [$dateTime, $value];
             }
         }
 
