@@ -44,7 +44,7 @@ class UpdateStatusAction{
     public function handle($lead){
         $leadId = !empty($lead['id']) ? (int) $lead['id'] : null;
         if(!$leadId) return Log::warning('AmoWebhook: Lead payload without valid ID', ['payload' => $lead]);
-        
+
         $currentPipelineId = (int) $lead['pipeline_id'] ?? 0;
         $currentStatusId = (int) $lead['status_id'];
         $oldStatusId = $lead['old_status_id'] ?? null;
@@ -115,31 +115,24 @@ class UpdateStatusAction{
         $filledFieldIds = $this->extractFilledCustomFieldIds($lead);
         
 
-        // Целевой статус: пишем сразу, если был реальный переход
+        // Не было перехода по status_id => update DB + return
         $statusChanged = ($oldStatusId !== $currentStatusId);
-        $targetCustomFieldId = self::TRACKED_PIPELINES_STATUSES[$currentPipelineId][$currentStatusId] ?? null;
-        if ($statusChanged && $targetCustomFieldId) {
-            $amoFieldsToUpdate[] = [
-                'field_id' => $targetCustomFieldId,
-                'values'   => [
-                    ['value' => $now->timestamp],
-                ],
-            ];
-        }else{
+        if (!$statusChanged){
             $this->leads->update($dbLeadData);
             return;
         }
 
         // НАВЕРСТЫВАНИЕ ПРОПУЩЕННЫХ ШАГОВ
-        $flatCustomIds = [];
+        $flatCustomFields = [];
         foreach(self::TRACKED_PIPELINES_STATUSES as $statuses){
             foreach($statuses as $key => $value){
-                $flatCustomIds[] = $customFields[$value][0] ?? null;
+                $flatCustomFields[] = [$customFields[$value][0] ?? null, $value];
             }
         }
 
         $timestampGuide = [];
         $flatIndex = 0;
+        
         foreach (self::PIPELINES_ORDER as $index => $pipelineId) {
             // Воронки, идущие позже текущей, вообще не трогаем
             if ($index > $currentPipelineIndex) {
@@ -150,22 +143,35 @@ class UpdateStatusAction{
             $isCurrentPipeline = ($pipelineId === $currentPipelineId);
 
             foreach ($steps as $stepStatusId => $customFieldId) {
-                $flatIndex++;
-                if(!$flatCustomIds[$flatIndex])
-                // Дошли до текущего статуса — дальше не идем (текущий уже обработан выше)
-                if ($isCurrentPipeline && $stepStatusId === $currentStatusId) {
-                    break;
-                }    
-                // Проверяем только пропущенные шаги
-                $timestampGuide[] = $customFields[$customFieldId] ?? null;
-                if (! in_array($customFieldId, $filledFieldIds, true)) {
+                if(!$flatCustomFields[$flatIndex][0]){
+                    $metka = null;
+                    $lookupForward = array_slice($flatCustomFields, $flatIndex+1);
+                    $lookupEmpty = true;
+                    foreach($lookupForward as $array){
+                        if($array[0]) $lookupEmpty = false;
+                        break;
+                    }
+                    if(!$lookupEmpty){
+                        foreach($lookupForward as $array){
+                            if($array[0]){
+                                $metka = $array[0];
+                                break;
+                            }
+                        }
+                    }else{
+                        for($i = $flatIndex-1; $i >= 0; $i--){
+                            if($flatCustomFields[$i][0]){
+                                $metka = $flatCustomFields[$i][0];
+                                break;
+                            }
+                        }
+                    }
                     $amoFieldsToUpdate[] = [
                         'field_id' => $customFieldId,
                         'values'   => [
-                            ['value' => $now->timestamp],
-                        ],
+                            ['value' => $metka],
+                        ]
                     ];
-
                     $dbStatusLogs[] = [
                         'amo_lead_id'         => $lead['id'],
                         'pipeline_id'         => $pipelineId,
@@ -176,7 +182,20 @@ class UpdateStatusAction{
                         'entered_at'          => Carbon::createFromTimestamp($lead['updated_at'] ?? $now->timestamp)->toDateTimeString(),
                         'created_at'          => $now->toDateTimeString()
                     ];
+                }else{
+                    $amoFieldsToUpdate[] = [
+                        'field_id' => $customFieldId,
+                        'values'   => [
+                            ['value' => $flatCustomFields[$flatIndex][0]],
+                        ]
+                    ];
                 }
+                // Дошли до текущего статуса — дальше не идем (текущий уже обработан выше)
+                if ($isCurrentPipeline && self::TRACKED_PIPELINES_STATUSES[$pipelineId][$lead['status_id']] === $customFieldId) {
+                    error_log(123);
+                    break;
+                }
+                $flatIndex++;
             }
         }
         
