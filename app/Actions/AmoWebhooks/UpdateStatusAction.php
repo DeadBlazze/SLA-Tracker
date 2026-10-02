@@ -249,7 +249,7 @@ class UpdateStatusAction{
                     ]);
                     DB::transaction(function () use ($fullLeadData, $dbStatusLogs) {
                         // Создаем родительскую сделку
-                        $this->leads->add($fullLeadData);
+                        $this->leads->updateOrInsert($fullLeadData);
                         $this->leadStatusLogs->add($dbStatusLogs);
                     });
                 }else {
