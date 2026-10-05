@@ -1,0 +1,118 @@
+{
+    "73143094": [
+        {
+            "user_id": 12674562,
+            "entrered_at": 1790921479,
+            "pipeline_id": 9089018,
+            "old_status_id": 73143098
+        },
+        {
+            "user_id": 12674562,
+            "entrered_at": 1790883078,
+            "pipeline_id": 9089018,
+            "old_status_id": 73249794
+        }
+    ],
+    "73143098": [
+        {
+            "user_id": 12674562,
+            "entrered_at": 1790883282,
+            "pipeline_id": 9089018,
+            "old_status_id": 73140050
+        }
+    ],
+    "73140050": [
+        {
+            "user_id": 12674562,
+            "entrered_at": 1790883242,
+            "pipeline_id": 9089018,
+            "old_status_id": 73143094
+        },
+        {
+            "user_id": 12674562,
+            "entrered_at": 1790855104,
+            "pipeline_id": 9089018,
+            "old_status_id": 73249794
+        },
+        {
+            "user_id": 12674562,
+            "entrered_at": 1790854437,
+            "pipeline_id": 9089018,
+            "old_status_id": 73249794
+        },
+        {
+            "user_id": 12674562,
+            "entrered_at": 1790846905,
+            "pipeline_id": 9089018,
+            "old_status_id": 73249794
+        },
+        {
+            "user_id": 12674562,
+            "entrered_at": 1790846581,
+            "pipeline_id": 9089018,
+            "old_status_id": 73249794
+        },
+        {
+            "user_id": 12674562,
+            "entrered_at": 1790846449,
+            "pipeline_id": 9089018,
+            "old_status_id": 73249794
+        },
+        {
+            "user_id": 12674562,
+            "entrered_at": 1790845861,
+            "pipeline_id": 9089018,
+            "old_status_id": 73249794
+        },
+        {
+            "user_id": 12674562,
+            "entrered_at": 1790845579,
+            "pipeline_id": 9089018,
+            "old_status_id": 73139654
+        }
+    ],
+    "73249794": [
+        {
+            "user_id": 12674562,
+            "entrered_at": 1790863077,
+            "pipeline_id": 9089018,
+            "old_status_id": 73140050
+        },
+        {
+            "user_id": 12674562,
+            "entrered_at": 1790854512,
+            "pipeline_id": 9089018,
+            "old_status_id": 73140050
+        },
+        {
+            "user_id": 12674562,
+            "entrered_at": 1790846983,
+            "pipeline_id": 9089018,
+            "old_status_id": 73140050
+        },
+        {
+            "user_id": 12674562,
+            "entrered_at": 1790846650,
+            "pipeline_id": 9089018,
+            "old_status_id": 73140050
+        },
+        {
+            "user_id": 12674562,
+            "entrered_at": 1790846482,
+            "pipeline_id": 9089018,
+            "old_status_id": 73140050
+        },
+        {
+            "user_id": 12674562,
+            "entrered_at": 1790846427,
+            "pipeline_id": 9089018,
+            "old_status_id": 73140050
+        },
+        {
+            "user_id": 12674562,
+            "entrered_at": 1790845764,
+            "pipeline_id": 9089018,
+            "old_status_id": 73140050
+        }
+    ]
+}
