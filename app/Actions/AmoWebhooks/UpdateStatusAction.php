@@ -126,13 +126,14 @@ class UpdateStatusAction{
         // НАВЕРСТЫВАНИЕ ПРОПУЩЕННЫХ ШАГОВ
         $flatCustomFields = [];
         foreach(self::TRACKED_PIPELINES_STATUSES as $statuses){
-            foreach($statuses as $key => $value){
-                $dateTime = !empty($customFields[$value][0]) ? Carbon::createFromTimestamp($customFields[$value][0])->toIso8601String() : null;
-                $flatCustomFields[] = [$dateTime, $value];
+            foreach($statuses as $key => $customId){
+                $dateTime = !empty($customFields[$customId][0]) ? Carbon::createFromTimestamp($customFields[$customId][0])->toIso8601String() : null;
+                $flatCustomFields[] = [$dateTime, $customId];
             }
         }
-        $this->getStatusLogsAndAmoFields($lead, $currentPipelineIndex, $currentPipelineId, $dbStatusLogs[0], $flatCustomFields, $now);
-        return;    
+        $resultArray = $this->getStatusLogsAndAmoFields($lead, $currentPipelineIndex, $currentPipelineId, $dbStatusLogs[0], $flatCustomFields, $now);
+        array_push($amoFieldsToUpdate, ...$resultArray['amoFieldsToUpdate']);
+        array_push($dbStatusLogs, ...$resultArray['dbStatusLogs']);
         
         $baseDomain = config('services.amocrm.base_domain');
         $token = config('services.amocrm.token');
@@ -175,7 +176,43 @@ class UpdateStatusAction{
                     }
                     $responseData = json_decode((string) $response->getBody(), true);
                     $events = $responseData['_embedded']['events'];
-                    $statusHistory = [];
+                    usort($events, fn ($a, $b) => $a['created_at'] <=> $b['created_at']);
+                    $currentStatusId = array_last($events)['value_after'][0]['lead_status']['id'];
+                    $currentPipelineId = array_last($events)['value_after'][0]['lead_status']['pipeline_id'];
+                    $eventsMapByCustomId = [];
+                    foreach($events as $event){
+                        $eventsMapByCustomId[$event['value_after'][0]['lead_status']['id']] = [
+                            $event['created_at']
+                        ];
+                    }
+
+                    // $flatEventsHistory= [];
+                    // foreach(self::TRACKED_PIPELINES_STATUSES as $pipelineId => $pipelineStatuses){
+                    //     foreach($pipelineStatuses as $key=>$customId){
+                    //         $dateTime = !empty($eventsMapByCustomId[$key][0]) ? Carbon::createFromTimestamp($eventsMapByCustomId[$key][0])->toIso8601String() : null;
+                    //         $flatEventsHistory[] = [$dateTime,$customId];
+                    //         if($key == $currentStatusId && $pipelineId == $currentPipelineId) break 2;
+                    //     }
+                    // }
+
+                    $flatCustomFields = [];
+                    $i = 0;
+                    foreach (self::TRACKED_PIPELINES_STATUSES as $pipelineId => $statuses) {
+                        foreach ($statuses as $statusId => $customId) {
+                            $timestamp = $eventsMapByCustomId[$statusId][0] ?? null;
+                            $dateTime = !empty($timestamp) 
+                                ? Carbon::createFromTimestamp($timestamp)->toIso8601String() 
+                                : null;
+
+                            $flatCustomFields[] = [$dateTime, $customId];
+                            $i++;
+                            // Прерываем оба цикла, когда дошли до текущей точки сделки
+                            if ($pipelineId == $currentPipelineId && $statusId == $currentStatusId) {
+                                break 2;
+                            }
+                        }
+                    }
+                    return;
                     foreach($events as $event){
                         $statusHistory[] = [
                             "amo_lead_id"         => $lead['id'],
@@ -208,11 +245,11 @@ class UpdateStatusAction{
                     //     return;
                     // }
                     // $responseData = json_decode((string) $response->getBody(), true);;
-                    // $fullLeadData = array_merge($dbLeadData, [
-                    //     "amo_source_name" => $responseData['_embedded']['source']['name'] ?? null,
-                    //     "amo_source_id" => $responseData['_embedded']['source']['id'] ?? null,
-                    //     "created_at" => Carbon::createFromTimestamp($responseData['created_at'])->toDateTimeString(),
-                    // ]);
+                    $fullLeadData = array_merge($dbLeadData, [
+                        "amo_source_name" => $responseData['_embedded']['source']['name'] ?? null,
+                        "amo_source_id" => $responseData['_embedded']['source']['id'] ?? null,
+                        "created_at" => Carbon::createFromTimestamp($responseData['created_at'])->toDateTimeString(),
+                    ]);
                     // DB::transaction(function () use ($fullLeadData, $dbStatusLogs) {
                     //     // Создаем родительскую сделку
                     //     $this->leads->updateOrInsert($fullLeadData);

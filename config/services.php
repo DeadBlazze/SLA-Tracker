@@ -37,6 +37,12 @@ return [
     'amocrm' => [
         'base_domain' => env('AMO_BASE_DOMAIN', 'tkdvina.amocrm.ru'),
         'token'       => env('AMO_LONG_LIVED_TOKEN'),
+    ],
+    'megafon' => [
+        'crm_token' => env('MEGAFON_ACCESS_KEY')
+    ],
+    'calltracking_one'=>[
+        'token' => env('CALLTRACKING_ONE_TOKEN')
     ]
 
 ];

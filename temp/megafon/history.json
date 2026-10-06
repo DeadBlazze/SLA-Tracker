@@ -1,0 +1,15 @@
+{
+ "wait": "16",
+ "duration": "6",
+ "telnum": "79210802077",
+ "start": "20261005T123504Z",
+ "phone": "79009205567",
+ "cmd": "history",
+ "status": "Success",
+ "link": "https://vats675508.megapbx.ru/api/v2/call-records/record/2026-10-05/44d31e0d-72ee-495b-9a6e-accf6ef1ff59/79009205567_in_79210802077_2026_10_05-15_35_20_gnmn.mp3",
+ "user": "9210802077",
+ "callid": "OECE6KF2CG000048",
+ "type": "in",
+ "diversion": "79210802077",
+ "ext": "707"
+}
