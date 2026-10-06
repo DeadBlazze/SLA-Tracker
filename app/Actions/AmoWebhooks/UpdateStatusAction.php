@@ -220,9 +220,32 @@ class UpdateStatusAction{
                         'responsible_user_id' => $lead['responsible_user_id'] ?? null,
                         'entered_at'          => Carbon::createFromTimestamp($events[0]['created_at'])->toDateTimeString() ?? $now->toDateTimeString()
                     ];
+                    $dbLeadData = [
+                        'amo_lead_id'         => $events[0]['entity_id'],
+                        'status_id'           => $currentStatusId,
+                        'old_status_id'       => $events[0]['value_before'][0]['lead_status']['id'],
+                        'responsible_user_id' => $lead['responsible_user_id'] ?? null,
+                        'pipeline_id' => $currentPipelineId
+                    ];
                     $currentPipelineIndex = array_search($currentPipelineId, self::PIPELINES_ORDER, true);
-                    $resultArray = $this->getStatusLogsAndAmoFields($currentPipelineIndex, $currentPipelineId, $logsCap, $flatCustomFields, $now);
-                    error_log(123);
+                    $result = $this->getStatusLogsAndAmoFields($currentPipelineIndex, $currentPipelineId, $logsCap, $flatCustomFields, $now);
+                    $amoFieldsToUpdate = $result['amoFieldsToUpdate'];
+                    $dbStatusLogs      = $result['dbStatusLogs'];
+                    $response = $client->patch("/api/v4/leads/{$lead['id']}", [
+                        'headers' => [
+                            'Authorization' => "Bearer {$token}",
+                        ],
+                        'json' => [
+                            'custom_fields_values' => $amoFieldsToUpdate
+                        ]
+                    ]);
+                    if($response->getStatusCode() === 200){
+                        DB::transaction(function () use ($dbLeadData, $dbStatusLogs) {
+                            $result0 = $this->leads->updateOrInsert($dbLeadData);
+                            $result = $this->leadStatusLogs->add($dbStatusLogs);
+                        });
+                        error_log(123);
+                    }
                     return;
                 }else {
                     // Любая другая ошибка базы должна валиться дальше
