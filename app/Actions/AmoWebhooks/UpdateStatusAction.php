@@ -131,7 +131,7 @@ class UpdateStatusAction{
                 $flatCustomFields[] = [$dateTime, $customId];
             }
         }
-        $resultArray = $this->getStatusLogsAndAmoFields($lead, $currentPipelineIndex, $currentPipelineId, $dbStatusLogs[0], $flatCustomFields, $now);
+        $resultArray = $this->getStatusLogsAndAmoFields($currentPipelineIndex, $currentPipelineId, $dbStatusLogs[0], $flatCustomFields, $now);
         array_push($amoFieldsToUpdate, ...$resultArray['amoFieldsToUpdate']);
         array_push($dbStatusLogs, ...$resultArray['dbStatusLogs']);
         
@@ -212,49 +212,18 @@ class UpdateStatusAction{
                             }
                         }
                     }
-                    return;
-                    foreach($events as $event){
-                        $statusHistory[] = [
-                            "amo_lead_id"         => $lead['id'],
-                            "pipeline_id" => $event['value_after'][0]['lead_status']['pipeline_id'],
-                            "old_status_id" => $event['value_before'][0]['lead_status']['id'],
-                            "status_id" =>$event['value_after'][0]['lead_status']['id'],
-                            "user_id" => $event['created_by'],
-                            "entrered_at" => Carbon::createFromTimestamp($event['created_at'])->toDateTimeString(),
-                            'created_at' => $now->toDateTimeString()
-                        ];
-                        // $statusHistory[$event['value_after'][0]['lead_status']['id']][] = [
-                        //     "user_id" => $event['created_by'],
-                        //     "entrered_at" => $event['created_at'],
-                        //     "pipeline_id" => $event['value_after'][0]['lead_status']['pipeline_id'],
-                        //     "old_status_id" => $event['value_before'][0]['lead_status']['id']
-                        // ];
-                    }
+                    $logsCap = [
+                        'amo_lead_id'         => $events[0]['entity_id'],
+                        'old_status_id'       => $events[0]['value_before'][0]['lead_status']['id'],
+                        'status_id'           => $currentStatusId,
+                        'user_id'             => $events[0]['created_by'],
+                        'responsible_user_id' => $lead['responsible_user_id'] ?? null,
+                        'entered_at'          => Carbon::createFromTimestamp($events[0]['created_at'])->toDateTimeString() ?? $now->toDateTimeString()
+                    ];
+                    $currentPipelineIndex = array_search($currentPipelineId, self::PIPELINES_ORDER, true);
+                    $resultArray = $this->getStatusLogsAndAmoFields($currentPipelineIndex, $currentPipelineId, $logsCap, $flatCustomFields, $now);
                     error_log(123);
-                    // Сделки нет в БД -> идём в amoCRM API за полными данными
-                    // $response = $client->get("/api/v4/leads/{$leadId}?with=source", [
-                    //     'headers' => [
-                    //     'Authorization' => "Bearer {$token}",
-                    //     ],
-                    // ]);
-                    // if ($response->getStatusCode() !== 200) {
-                    //     Log::error("[HANDLED_ERROR][HTTP_200] AmoWebhook: Failed to fetch lead {$leadId} from API", [
-                    //         'status' => $response->getStatusCode(),
-                    //         'body'   => (string) $response->getBody()
-                    //     ]);
-                    //     return;
-                    // }
-                    // $responseData = json_decode((string) $response->getBody(), true);;
-                    $fullLeadData = array_merge($dbLeadData, [
-                        "amo_source_name" => $responseData['_embedded']['source']['name'] ?? null,
-                        "amo_source_id" => $responseData['_embedded']['source']['id'] ?? null,
-                        "created_at" => Carbon::createFromTimestamp($responseData['created_at'])->toDateTimeString(),
-                    ]);
-                    // DB::transaction(function () use ($fullLeadData, $dbStatusLogs) {
-                    //     // Создаем родительскую сделку
-                    //     $this->leads->updateOrInsert($fullLeadData);
-                    //     $this->leadStatusLogs->add($dbStatusLogs);
-                    // });
+                    return;
                 }else {
                     // Любая другая ошибка базы должна валиться дальше
                     throw $e;
@@ -284,7 +253,6 @@ class UpdateStatusAction{
     /**
  * Формирует поля для обновления AmoCRM и логи истории статусов.
  *
- * @param array $lead
  * @param int $currentPipelineIndex
  * @param int $currentPipelineId
  * @param array $logsCap
@@ -293,7 +261,6 @@ class UpdateStatusAction{
  * @return array{amoFieldsToUpdate: array, dbStatusLogs: array}
  */
 private function getStatusLogsAndAmoFields(
-    array $lead,
     int $currentPipelineIndex,
     int $currentPipelineId,
     array $logsCap,
@@ -334,7 +301,7 @@ private function getStatusLogsAndAmoFields(
                         }
                     }
                 }
-
+                if(!$metka) $metka = Carbon::now()->toIso8601String();
                 $amoFieldsToUpdate[] = [
                     'field_id' => $customFieldId,
                     'values'   => [
@@ -349,7 +316,7 @@ private function getStatusLogsAndAmoFields(
                     'status_id'           => $stepStatusId,
                     'user_id'             => $flatCustomFields['modified_user_id'] ?? $logsCap['old_status_id'],
                     'responsible_user_id' => $logsCap['responsible_user_id'],
-                    'entered_at'          => Carbon::createFromTimestamp($lead['created_at'])->toDateTimeString(),
+                    'entered_at'          => $logsCap['entered_at'],
                     'created_at'          => $now->toDateTimeString(),
                 ];
             } else {
@@ -362,7 +329,7 @@ private function getStatusLogsAndAmoFields(
             }
 
             // Дошли до текущего статуса — дальше не идем
-            if ($isCurrentPipeline && (self::TRACKED_PIPELINES_STATUSES[$pipelineId][$lead['status_id']] ?? null) === $customFieldId) {
+            if ($isCurrentPipeline && (self::TRACKED_PIPELINES_STATUSES[$pipelineId][$logsCap['status_id']] ?? null) === $customFieldId) {
                 break;
             }
 
