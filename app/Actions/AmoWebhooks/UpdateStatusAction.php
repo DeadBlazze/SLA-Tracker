@@ -103,17 +103,16 @@ class UpdateStatusAction{
         }
 
 
-        // Если воронки нет в цепочке пайплайнов — просто пишем в БД и выходим
+        // Если воронки или статуса нет в цепочке пайплайнов — просто пишем в БД и выходим
         $currentPipelineIndex = array_search($currentPipelineId, self::PIPELINES_ORDER, true);
-        if ($currentPipelineIndex === false) {
+        $pipelineStatuses = array_keys(self::TRACKED_PIPELINES_STATUSES[$currentPipelineId]);
+        $currentStatusIndex = array_search($currentStatusId, $pipelineStatuses);
+        if ($currentPipelineIndex === false || $currentStatusIndex === false) {
             $this->leads->update($dbLeadData);
             error_log(123);
             return;
         }
-
-
-        $filledFieldIds = $this->extractFilledCustomFieldIds($lead);
-        
+  
 
         // Не было перехода по status_id => update DB + return
         $statusChanged = ($oldStatusId !== $currentStatusId);
