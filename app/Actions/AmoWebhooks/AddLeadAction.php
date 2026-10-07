@@ -7,12 +7,17 @@ use GuzzleHttp\Client;
 use App\Services\amoCRM\ResolveLeadSourceService;
 use Illuminate\Support\Carbon as SupportCarbon;
 use Illuminate\Support\Facades\Log;
+use App\Support\AmoPipelines;
 
 class AddLeadAction {
     public function __construct(
         private LeadRepository $leads,
         private ResolveLeadSourceService $leadSourceResolver
     ) {}
+
+    private const PIPELINES_ORDER = AmoPipelines::DATA['PIPELINES_ORDER'];
+    private const TRACKED_PIPELINES_STATUSES = AmoPipelines::DATA['TRACKED_PIPELINES_STATUSES'];
+
     public function handle($lead){
         // Запрашиваем все поля сделки
         $baseDomain = config('services.amocrm.base_domain');
@@ -55,8 +60,31 @@ class AddLeadAction {
                 $field['values'][0] ?? null
             ];
         }
-
-
+        
+        // Очищаем метки если сделка скопирована
+        $targetFieldSkipped = false;
+        $filledCustomFields = [];
+        $firstCustomStatusid = array_values(array_values(self::TRACKED_PIPELINES_STATUSES)[0])[0];
+        foreach(self::TRACKED_PIPELINES_STATUSES as $statuses){
+            foreach($statuses as $statusId => $customId){
+                if(!$targetFieldSkipped){
+                    if($customId === $firstCustomStatusid){
+                        $targetFieldSkipped = true;
+                        continue;
+                    }
+                }
+                $dateTime = $customFields[$customId][0] ?? null;
+                if($dateTime) $filledCustomFields[] = $customId;
+            }
+        }
+        if($filledCustomFields){
+            foreach($filledCustomFields as $customId){
+                $amoFieldsToUpdate[] = [
+                    'field_id' => $customId,
+                    'values'   => null,
+                ];
+            }
+        }   
         // Заполняем $dbLeadData и $amoFieldsToInsert
         $promo_source = [
             "promo_source_name" => $customFields[729721][0]['value'] ?? null,
