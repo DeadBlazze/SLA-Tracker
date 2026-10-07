@@ -70,15 +70,8 @@ class AddLeadAction {
         // Очищаем метки если сделка скопирована
         $targetFieldSkipped = false;
         $filledCustomFields = [];
-        $firstCustomStatusid = array_values(array_values(self::TRACKED_PIPELINES_STATUSES)[0])[0];
         foreach(self::TRACKED_PIPELINES_STATUSES as $statuses){
             foreach($statuses as $statusId => $customId){
-                if(!$targetFieldSkipped){
-                    if($customId === $firstCustomStatusid){
-                        $targetFieldSkipped = true;
-                        continue;
-                    }
-                }
                 $dateTime = $customFields[$customId][0] ?? null;
                 if($dateTime) $filledCustomFields[] = $customId;
             }
