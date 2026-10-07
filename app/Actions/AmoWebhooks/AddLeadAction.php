@@ -110,7 +110,7 @@ class AddLeadAction {
         $amoFieldsToUpdate[] = [
             'field_id' => 731973,
             'values' => [
-                ['value' => Carbon::createFromTimestamp($lead['date_create'])->timestamp],
+                ['value' => Carbon::createFromTimestamp($lead['date_create'])->toIso8601String()],
             ],
         ];
                 
