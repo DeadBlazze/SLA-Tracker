@@ -4,8 +4,9 @@ namespace App\Actions\AmoWebhooks;
 use App\Repositories\LeadRepository;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\RequestException;
 use App\Services\amoCRM\ResolveLeadSourceService;
-use Illuminate\Support\Carbon as SupportCarbon;
 use Illuminate\Support\Facades\Log;
 use App\Support\AmoPipelines;
 
@@ -27,17 +28,22 @@ class AddLeadAction {
             'timeout'  => 5.0
         ]);
         $leadId = $lead['id'];
-        $response = $client->get("/api/v4/leads/{$leadId}?with=source", [
-            'headers' => [
-            'Authorization' => "Bearer {$token}",
-            ],
-        ]);
-        $statusCode = $response->getStatusCode();
-        if ($statusCode === 204 || $statusCode === 404) {
-            // Сделка удалена или не найдена в amoCRM
-            Log::warning("Сделка {$leadId} не найдена в amoCRM (HTTP {$statusCode})");
+
+        try{
+            $response = $client->get("/api/v4/leads/{$leadId}?with=source", [
+                'headers' => [
+                'Authorization' => "Bearer {$token}",
+                ],
+            ]);
+        } catch (RequestException $e) {
+            Log::error("Таймаут или сетевая ошибка amoCRM: " . $e->getMessage());
             return;
         }
+        if ($response->getStatusCode() === 204) {
+            Log::warning("Сделка {$leadId} вернула пустой ответ (HTTP 204 No Content)");
+            return;
+        }
+
         $leadData = json_decode((string) $response->getBody(), true);
 
 
