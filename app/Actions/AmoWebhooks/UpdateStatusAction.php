@@ -105,9 +105,7 @@ class UpdateStatusAction{
 
         // Если воронки или статуса нет в цепочке пайплайнов — просто пишем в БД и выходим
         $currentPipelineIndex = array_search($currentPipelineId, self::PIPELINES_ORDER, true);
-        $pipelineStatuses = array_keys(self::TRACKED_PIPELINES_STATUSES[$currentPipelineId]);
-        $currentStatusIndex = array_search($currentStatusId, $pipelineStatuses);
-        if ($currentPipelineIndex === false || $currentStatusIndex === false) {
+        if ($currentPipelineIndex === false) {
             $this->leads->update($dbLeadData);
             error_log(123);
             return;
@@ -156,8 +154,8 @@ class UpdateStatusAction{
             // Обработка ошибки добавления лога по внешнему ключу на amo_lead_id
             try{
                 DB::transaction(function () use ($dbLeadData, $dbStatusLogs) {
-                    $result = $this->leadStatusLogs->add($dbStatusLogs);
-                    $result0 = $this->leads->update($dbLeadData);
+                    $this->leadStatusLogs->insertOrIgnore($dbStatusLogs);
+                    $this->leads->update($dbLeadData);
                 });
             }catch(\Illuminate\Database\QueryException $e){
                 if (isset($e->errorInfo[1]) && (int) $e->errorInfo[1] === 1452) {
@@ -184,15 +182,6 @@ class UpdateStatusAction{
                             $event['created_at']
                         ];
                     }
-
-                    // $flatEventsHistory= [];
-                    // foreach(self::TRACKED_PIPELINES_STATUSES as $pipelineId => $pipelineStatuses){
-                    //     foreach($pipelineStatuses as $key=>$customId){
-                    //         $dateTime = !empty($eventsMapByCustomId[$key][0]) ? Carbon::createFromTimestamp($eventsMapByCustomId[$key][0])->toIso8601String() : null;
-                    //         $flatEventsHistory[] = [$dateTime,$customId];
-                    //         if($key == $currentStatusId && $pipelineId == $currentPipelineId) break 2;
-                    //     }
-                    // }
 
                     $flatCustomFields = [];
                     $i = 0;
@@ -239,9 +228,10 @@ class UpdateStatusAction{
                         ]
                     ]);
                     if($response->getStatusCode() === 200){
+                        // insertOrIgnore для предотвращения падения на duplicate entry lead_pipeline_status_unique
                         DB::transaction(function () use ($dbLeadData, $dbStatusLogs) {
                             $result0 = $this->leads->updateOrInsert($dbLeadData);
-                            $result = $this->leadStatusLogs->add($dbStatusLogs);
+                            $result = $this->leadStatusLogs->insertOrIgnore($dbStatusLogs);
                         });
                         error_log(123);
                     }
