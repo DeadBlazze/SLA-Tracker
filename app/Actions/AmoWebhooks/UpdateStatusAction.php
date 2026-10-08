@@ -58,7 +58,8 @@ class UpdateStatusAction{
             'responsible_user_id' => $lead['responsible_user_id'] ?? null,
             'pipeline_id'         => $currentPipelineId
         ];
-        $dbStatusLogs = [[
+        $dbStatusLogs = [];
+        $logsCap = [
             'amo_lead_id'         => $lead['id'],
             'pipeline_id'         => $currentPipelineId,
             'old_status_id'       => $oldStatusId,
@@ -66,8 +67,9 @@ class UpdateStatusAction{
             'user_id'             => $lead['modified_user_id'] ?? null,
             'responsible_user_id' => $lead['responsible_user_id'] ?? null,
             'entered_at'          => Carbon::createFromTimestamp($lead['updated_at'])->toDateTimeString() ?? $now->toDateTimeString(),
+            'entered_at_iso'      => Carbon::createFromTimestamp($lead['updated_at'])->toIso8601String(),
             'created_at'          => $now->toDateTimeString()
-        ]];
+        ];
 
 
         // Data for DB
@@ -128,7 +130,7 @@ class UpdateStatusAction{
                 $flatCustomFields[] = [$dateTime, $customId];
             }
         }
-        $resultArray = $this->getStatusLogsAndAmoFields($currentPipelineIndex, $currentPipelineId, $dbStatusLogs[0], $flatCustomFields, $now);
+        $resultArray = $this->getStatusLogsAndAmoFields($currentPipelineIndex, $currentPipelineId, $logsCap, $flatCustomFields, $now);
         array_push($amoFieldsToUpdate, ...$resultArray['amoFieldsToUpdate']);
         array_push($dbStatusLogs, ...$resultArray['dbStatusLogs']);
         
@@ -206,7 +208,8 @@ class UpdateStatusAction{
                         'status_id'           => $currentStatusId,
                         'user_id'             => $events[0]['created_by'],
                         'responsible_user_id' => $lead['responsible_user_id'] ?? null,
-                        'entered_at'          => Carbon::createFromTimestamp($events[0]['created_at'])->toDateTimeString() ?? $now->toDateTimeString()
+                        'entered_at'          => Carbon::createFromTimestamp($events[0]['created_at'])->toDateTimeString() ?? $now->toDateTimeString(),
+                        'entered_at_iso'      => Carbon::createFromTimestamp($events[0]['created_at'])->toIso8601String()
                     ];
                     $dbLeadData = [
                         'amo_lead_id'         => $events[0]['entity_id'],
@@ -313,7 +316,7 @@ private function getStatusLogsAndAmoFields(
                         }
                     }
                 }
-                if(!$metka) $metka = Carbon::now()->toIso8601String();
+                if(!$metka) $metka = $logsCap['entered_at_iso'];
                 $amoFieldsToUpdate[] = [
                     'field_id' => $customFieldId,
                     'values'   => [
@@ -331,18 +334,11 @@ private function getStatusLogsAndAmoFields(
                     'entered_at'          => $logsCap['entered_at'],
                     'created_at'          => $now->toDateTimeString(),
                 ];
-            } else {
-                $amoFieldsToUpdate[] = [
-                    'field_id' => $customFieldId,
-                    'values'   => [
-                        ['value' => $currentDate],
-                    ],
-                ];
             }
 
             // Дошли до текущего статуса — дальше не идем
             if ($isCurrentPipeline && (self::TRACKED_PIPELINES_STATUSES[$pipelineId][$logsCap['status_id']] ?? null) === $customFieldId) {
-                break;
+                break 2;
             }
 
             $flatIndex++;
