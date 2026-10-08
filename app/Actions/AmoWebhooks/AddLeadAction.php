@@ -68,7 +68,6 @@ class AddLeadAction {
         }
         
         // Очищаем метки если сделка скопирована
-        $targetFieldSkipped = false;
         $filledCustomFields = [];
         foreach(self::TRACKED_PIPELINES_STATUSES as $statuses){
             foreach($statuses as $statusId => $customId){
