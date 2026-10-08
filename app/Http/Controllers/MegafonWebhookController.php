@@ -21,7 +21,7 @@ class MegafonWebhookController extends Controller
 
         // 2. Проверка токена интеграции
         $expectedToken = config('services.megafon.crm_token');
-        if ($expectedToken && $request->input('crm_token') !== $expectedToken) {
+        if ($request->input('crm_token') !== $expectedToken) {
             return response('Unauthorized', 401);
         }
 

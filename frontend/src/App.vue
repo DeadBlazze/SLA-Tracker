@@ -1,5 +1,7 @@
 <template lang="pug">
-router-view
+  router-view 
 </template>
-<script setup lang="ts"></script>
+
+<script></script>
+
 <style scoped></style>

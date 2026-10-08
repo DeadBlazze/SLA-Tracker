@@ -11,7 +11,7 @@ Route::get('/', fn () => response()->json(['Данный enpoint не подде
 
 Route::post('/oauth/callback', [AmoOAuthController::class, 'callback']);
 
-Route::prefix('webhooks/amo')->group(function () {
+Route::prefix('/webhooks/amo')->group(function () {
     // Единый эндпоинт для обработки всех вебхуков (смена статуса, создание сделки)
     Route::post('/', [AmoWebhookController::class, 'handle']);
 });
