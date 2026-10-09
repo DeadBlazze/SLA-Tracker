@@ -16,13 +16,20 @@
         gap: 30px;
         grid-template-columns: repeat(auto-fill, 300px);
         .service{
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
             border: 3px solid #5d7388;
-            // border-radius: 10px;
             padding: 10px;
             cursor: pointer;
             &__header{
                 display: flex;
                 gap: 10px;
+                .service__arrow{
+                    color: var(--color-text);
+                    height: 20px;
+                    transform: rotate(90deg) translateY(-8px);
+                }
             }
         }
         // @media(max-width:1200px){
