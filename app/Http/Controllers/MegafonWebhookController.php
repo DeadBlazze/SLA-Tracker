@@ -69,7 +69,7 @@ class MegafonWebhookController extends Controller
         ];
 
         // 8. Отправка в коллтрекинг
-        $token = config('services.calltracking_one.token');
+        $token = config('services.calltracking_one.tk-dvina_token');
         $client = new Client([
             'timeout' => 3.0,
         ]);
@@ -85,6 +85,23 @@ class MegafonWebhookController extends Controller
             Log::error('Calltracking webhook delivery failed', [
                 'callid' => $payload['external_call_id'] ?? null,
                 'error'  => $e->getMessage(),
+                'account' => 'tk-dvina'
+            ]);
+        }
+        $token = config('services.calltracking_one.tkdvina_token');
+        try {
+            $client->post('https://calltreckingone.ru/api_v1/calls/import.php', [
+                'headers' => [
+                    'Content-Type'  => 'application/json',
+                    'Authorization' => 'Bearer ' . $token,
+                ],
+                'json' => $payload,
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('Calltracking webhook delivery failed', [
+                'callid' => $payload['external_call_id'] ?? null,
+                'error'  => $e->getMessage(),
+                'account' => 'tkdvina'
             ]);
         }
 

@@ -42,7 +42,8 @@ return [
         'crm_token' => env('MEGAFON_ACCESS_KEY')
     ],
     'calltracking_one'=>[
-        'token' => env('CALLTRACKING_ONE_TOKEN')
+        'tk-dvina_token' => env('CALLTRACKING_ONE_TOKEN1'),
+        'tkdvina_token' => env('CALLTRACKING_ONE_TOKEN2'),
     ]
 
 ];
