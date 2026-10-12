@@ -13,8 +13,8 @@ export default {
   },
   data() {
     return {
-    // Начальное значение темы
-    currentTheme: 'light'
+      // Начальное значение темы
+      currentTheme: 'light'
     }
   },
   watch: {
