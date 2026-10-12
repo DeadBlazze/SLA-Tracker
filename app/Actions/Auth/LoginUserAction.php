@@ -18,7 +18,8 @@ class LoginUserAction {
         $token = $token = $this->jwtService->createToken($user->id, $user->role_id);
         return [
             'success' => true,
-            'token' => $token
+            'token' => $token,
+            'role_id'=> $user->role_id
         ];
     }
 }

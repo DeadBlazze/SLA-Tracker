@@ -44,4 +44,6 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style lang="scss">
+@use './App.scss' as *;
+</style>

@@ -1,12 +1,9 @@
 .LoginPage{
     display: flex;
     flex-grow: 1;
-    align-items: center;
     justify-content: center;
+    flex-grow: 0;
     form.form--main{
-        h2{
-            font-size: 24px;
-        }
         width: 323px;
         display: flex;
         flex-direction: column;
@@ -15,6 +12,9 @@
         border: 1px solid gray;
         border-radius: 10px;
         background-color: var(--color-bg2);
+        h2{
+            font-size: 24px;
+        }
         .form__content{
             display: flex;
             flex-direction: column;

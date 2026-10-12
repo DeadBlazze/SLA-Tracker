@@ -73,4 +73,15 @@ h1, h2, h3{
 }
 button{
   cursor: pointer;
+  background-color: #4f91cf;
+  color: white;
+}
+
+span.error{
+  color: red;
+  font-size: 12px;
+}
+
+.topMargin{
+  margin-top: 60px;
 }

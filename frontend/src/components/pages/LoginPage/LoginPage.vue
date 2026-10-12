@@ -1,5 +1,5 @@
 <template lang="pug">
-.LoginPage
+.LoginPage.topMargin
     form.form--main
         h2.form__title Авторизация
         .form__content
@@ -19,11 +19,13 @@
 <script>
 import axios from 'axios';
 import { toast } from 'vue3-toastify'
+import { useUserStore } from '@/stores/user';
 export default {
     data(){
         return {
-            form: {},
-            errors: {}
+                form: {},
+                errors: {},
+                userStore: useUserStore()
             }
     },
     methods: {
@@ -81,7 +83,6 @@ export default {
                 }
             }
         }
-        
     }
 }
 </script>
