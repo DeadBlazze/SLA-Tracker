@@ -23,10 +23,10 @@ import { useUserStore } from '@/stores/user';
 export default {
     data(){
         return {
-                form: {},
-                errors: {},
-                userStore: useUserStore()
-            }
+            form: {},
+            errors: {},
+            userStore: useUserStore()
+        }
     },
     methods: {
         validateForm() {

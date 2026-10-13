@@ -8,10 +8,11 @@
 }
 
 :root {
-  --color-bg: #ffffff;
+  --color-bg: #f7f7f7;
   --color-bg2: #ffffff;
   --color-text: #1a1a1a;
   --color-accent: #5d7388;
+  --color-accent-light: #3e6c97;
   --color-shadow: #3e6c97;
   color-scheme: light; /* Важно для нативных скроллбаров и контролов */
 }
@@ -21,6 +22,7 @@
   --color-bg2: #363840;
   --color-text: #ffffff;
   --color-accent: #4d5156;
+  --color-accent-light: #3e6c97;
   --color-shadow: black;
   color-scheme: dark;
 }

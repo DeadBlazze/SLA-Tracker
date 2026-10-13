@@ -4,6 +4,7 @@ import RegisterPage from "@/components/pages/Register/RegisterPage.vue";
 import LoginPage from "@/components/pages/LoginPage/LoginPage.vue";
 import DashboardPage from "@/components/pages/DashboardPage/DashboardPage.vue";
 import ForbiddenPage from "@/components/pages/ForbiddenPage/ForbiddenPage.vue";
+import SettingsPage from "@/components/pages/SettingsPage/SettingsPage.vue";
 import { useUserStore } from "@/stores/user";
 
 export const ROLES = {
@@ -13,11 +14,12 @@ export const ROLES = {
 }
 
 const routes = [
-  { path: '/', redirect: '/login'},
+  { path: '/', redirect: '/dashboard'},
   { path: '/dashboard', component: DashboardPage, 
     meta: { requiresAuth: true}, roles: [ROLES.SUPER_ADMIN, ROLES.MARKETER, ROLES.SALES_MANAGER]},
   { path: '/register', component: RegisterPage},
   { path: '/login', component: LoginPage},
+  { path: '/settings', component: SettingsPage},
   { path: '/forbidden', component: ForbiddenPage}
 ]
 
