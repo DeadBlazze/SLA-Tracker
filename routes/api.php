@@ -5,13 +5,17 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AmoOAuthController;
 use App\Http\Controllers\AmoWebhookController;
 use App\Http\Controllers\MegafonWebhookController;
-use App\Http\Controllers\testController;
-use App\http\Controllers\AuthController;
+use App\Http\Controllers\Dashboard\testController;
+use App\http\Controllers\Dashboard\AuthController;
+use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Middleware\JWTAuthMiddleware;
 use App\Http\Middleware\CheckRoleMiddleware;
 
 Route::get('/', fn () => response()->json(['Данный enpoint не поддерживается в настоящее время']));
-Route::post('/login', [AuthController::class, 'login']);
+
+Route::post('/dashboard/login', [AuthController::class, 'login']);
+Route::post('/dashboard/get-managers-activity', [DashboardController::class, 'getManagersActivity'])
+->middleware(['jwt', 'role:1,2']);
 
 Route::post('/test', [testController::class, 'index'])
 ->middleware(['jwt', 'role:1,2,3']);

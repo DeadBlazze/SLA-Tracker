@@ -14,4 +14,7 @@ class LeadStatusLogRepository{
     public function insertOrIgnore($data){
         LeadStatusLog::insertOrIgnore($data);
     }
+    public function getManagersActivity($userIds){
+        
+    }
 }
