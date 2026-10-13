@@ -11,9 +11,6 @@ class LeadStatusLogRepository{
         }
         return $result;
     }
-    public function upsert($data){
-        LeadStatusLog::upsert($data);
-    }
     public function insertOrIgnore($data){
         LeadStatusLog::insertOrIgnore($data);
     }
