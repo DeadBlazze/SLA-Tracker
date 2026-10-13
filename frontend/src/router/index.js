@@ -5,6 +5,7 @@ import LoginPage from "@/components/pages/LoginPage/LoginPage.vue";
 import DashboardPage from "@/components/pages/DashboardPage/DashboardPage.vue";
 import ForbiddenPage from "@/components/pages/ForbiddenPage/ForbiddenPage.vue";
 import SettingsPage from "@/components/pages/SettingsPage/SettingsPage.vue";
+import ManagerActivityPage from "@/components/pages/services/ManagerActivityPage/ManagerActivityPage.vue";
 import { useUserStore } from "@/stores/user";
 
 export const ROLES = {
@@ -15,8 +16,30 @@ export const ROLES = {
 
 const routes = [
   { path: '/', redirect: '/dashboard'},
-  { path: '/dashboard', component: DashboardPage, 
-    meta: { requiresAuth: true}, roles: [ROLES.SUPER_ADMIN, ROLES.MARKETER, ROLES.SALES_MANAGER]},
+  { 
+    path: '/dashboard',
+    meta: { requiresAuth: true},
+    children: [
+      {
+        path: '',
+        name: 'dashboard',
+        component: DashboardPage,
+        meta: { 
+          roles: [ROLES.SUPER_ADMIN, ROLES.MARKETER, ROLES.SALES_MANAGER],
+          requiresAuth: true
+        }
+      },
+      {
+        path: 'manager-activity',
+        name: 'dashboard.manager-activity',
+        component: ManagerActivityPage,
+        meta: { 
+          roles: [ROLES.SUPER_ADMIN, ROLES.MARKETER] ,
+          requiresAuth: true  
+        }
+      }
+    ]
+  },
   { path: '/register', component: RegisterPage},
   { path: '/login', component: LoginPage},
   { path: '/settings', component: SettingsPage},
@@ -30,15 +53,14 @@ const router = createRouter({
 
 router.beforeEach(async (to, from) => {
   const userStore = useUserStore()
+  const targetRoute = to.matched.at(-1)
 
-  if(!to.meta.requiresAuth) return true
+  if(!targetRoute?.meta?.requiresAuth) return true
   if(!userStore.isAuthenticated || !userStore.roleId) return '/login'
-  if (to.meta.roles){
-    const hasRole = to.meta.roles.includes(Number(userStore.roleId))
-    if (!hasRole) {
-      // Если роли нет, отправляем либо на 403 страницу, либо на общий дашборд
-      return '/forbidden'
-    }
+  
+  const allowedRoles = targetRoute?.meta?.roles
+  if (allowedRoles && !allowedRoles.includes(userStore.roleId)) {
+    return '/forbidden'
   }
   return true
 })

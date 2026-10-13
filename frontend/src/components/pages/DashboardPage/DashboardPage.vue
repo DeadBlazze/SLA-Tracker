@@ -3,13 +3,14 @@
     .wrapper
         .account
             .account__preview
-                p Старцев Евгений
-                p Администратор
+                p {{roleAlias}}
+                p {{profilePreview}}
         .services
             .service
                 .service__header
                     h3.service__title Аналитика рекламы
-                    ArrowTop.service__arrow
+                    router-link(:to="{name: 'dashboard.manager-activity'}") 
+                        ArrowTop.service__arrow
                 p Сводный дашборд эффективности маркетинга с группировкой по рекламным источникам.
 
             .service
@@ -30,9 +31,23 @@
 </template>
 <script>
 import ArrowTop from "@/assets/images/icons/arrowTop.svg?component";
+import { useUserStore } from '@/stores/user';
 export default{
+    data(){
+        return {
+            userStore: useUserStore()
+        }
+    },
     components: {
         ArrowTop: ArrowTop
+    },
+    computed: {
+        profilePreview() {
+            return this.userStore.preview
+        },
+        roleAlias() {
+            return this.userStore.roleAlias
+        }
     }
 }
 </script>

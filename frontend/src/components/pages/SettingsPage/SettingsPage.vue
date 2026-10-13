@@ -1,5 +1,5 @@
 <template lang="pug">
-.settings-page
+.settings-page.topMargin40
     .settings-page__inner
         h1 Настройки
 
