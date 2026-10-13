@@ -329,7 +329,7 @@ private function getStatusLogsAndAmoFields(
                     'pipeline_id'         => $pipelineId,
                     'old_status_id'       => $logsCap['old_status_id'],
                     'status_id'           => $stepStatusId,
-                    'user_id'             => $flatCustomFields['modified_user_id'] ?? $logsCap['old_status_id'],
+                    'user_id'             => $logsCap['user_id'],
                     'responsible_user_id' => $logsCap['responsible_user_id'],
                     'entered_at'          => $logsCap['entered_at'],
                     'created_at'          => $now->toDateTimeString(),
