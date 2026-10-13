@@ -125,7 +125,7 @@ class AddLeadAction {
         ]);
 
         if($response->getStatusCode() === 200){
-            $this->leads->updateOrInsert($dbLeadData);
+            $this->leads->upsert($dbLeadData);
         }
     }
 }

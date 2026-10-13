@@ -233,7 +233,7 @@ class UpdateStatusAction{
                     if($response->getStatusCode() === 200){
                         // insertOrIgnore для предотвращения падения на duplicate entry lead_pipeline_status_unique
                         DB::transaction(function () use ($dbLeadData, $dbStatusLogs) {
-                            $result0 = $this->leads->updateOrInsert($dbLeadData);
+                            $result0 = $this->leads->upsert($dbLeadData);
                             $result = $this->leadStatusLogs->insertOrIgnore($dbStatusLogs);
                         });
                         error_log(123);
