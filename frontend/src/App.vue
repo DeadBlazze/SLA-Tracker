@@ -1,12 +1,15 @@
 <template lang="pug">
 Header
+Breadcrumb
 router-view
 </template>
 <script>
-import Header from './components/ui/header/header.vue';
+import Header from './components/layout/Header/Header.vue';
+import Breadcrumb from './components/ui/Breabcrumb/Breadcrumb.vue';
 export default {
   components: {
-    Header: Header
+    Header: Header,
+    Breadcrumb: Breadcrumb
   },
   data() {
     return {

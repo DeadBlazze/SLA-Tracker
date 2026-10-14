@@ -1,0 +1,70 @@
+.ForbiddenPage {
+  display: flex;
+  justify-content: center;
+  flex-grow: 0;
+  &__card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 480px;
+    width: 100%;
+    padding: 40px 32px;
+    text-align: center;
+    background: var(--color-bg2);
+    border-radius: 16px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+    border: 1px solid #e2e8f0;
+  }
+
+  &__code {
+    font-size: 80px;
+    font-weight: 800;
+    line-height: 1;
+    color: #f85c5c;
+    letter-spacing: -2px;
+    margin-bottom: 12px;
+    user-select: none;
+  }
+
+  &__title {
+    margin: 0 0 8px;
+    font-size: 22px;
+    font-weight: 700;
+  }
+
+  &__description {
+    margin: 0 0 28px;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+
+    @media (max-width: 480px) {
+      flex-direction: column-reverse;
+    }
+  }
+
+  &__btn {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 8px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+
+    &--secondary {
+        background-color: gray;
+        border-color: #cbd5e1;
+    }
+  }
+}

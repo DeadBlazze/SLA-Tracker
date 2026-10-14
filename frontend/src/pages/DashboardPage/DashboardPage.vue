@@ -1,16 +1,11 @@
 <template lang="pug">
 .DashboardPage
     .wrapper
-        .account
-            .account__preview
-                p {{roleAlias}}
-                p {{profilePreview}}
         .services
             .service
                 .service__header
                     h3.service__title Аналитика рекламы
-                    router-link(:to="{name: 'dashboard.manager-activity'}") 
-                        ArrowTop.service__arrow
+                    ArrowTop.service__arrow(@click="console")
                 p Сводный дашборд эффективности маркетинга с группировкой по рекламным источникам.
 
             .service
@@ -21,7 +16,8 @@
             .service
                 .service__header
                     h3.service__title Активность менеджеров
-                    ArrowTop.service__arrow
+                    router-link(:to="{name: 'dashboard.manager-activity'}") 
+                        ArrowTop.service__arrow
                 p Инструмент оценки ежедневной производительности сотрудников отдела продаж.
             .service
                 .service__header
@@ -41,12 +37,9 @@ export default{
     components: {
         ArrowTop: ArrowTop
     },
-    computed: {
-        profilePreview() {
-            return this.userStore.preview
-        },
-        roleAlias() {
-            return this.userStore.roleAlias
+    methods:{
+        console(){
+            this.console.log(this.$route.matched)
         }
     }
 }

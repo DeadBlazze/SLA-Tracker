@@ -1,9 +1,11 @@
 .wrapper{
+    padding-top: 60px;
     .account{
-        width: 100%;
+        top: 0;
+        right: 20px;
+        position: absolute;
         display: flex;
-        margin-bottom: 20px;
-        justify-content: flex-end;
+        z-index: 10;
         .account__preview{
             background-color: var(--color-accent);
             color: white;

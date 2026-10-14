@@ -1,11 +1,11 @@
 import { createRouter, createWebHistory } from "vue-router";
-import IndexPage from "@/components/pages/IndexPage/IndexPage.vue";
-import RegisterPage from "@/components/pages/Register/RegisterPage.vue";
-import LoginPage from "@/components/pages/LoginPage/LoginPage.vue";
-import DashboardPage from "@/components/pages/DashboardPage/DashboardPage.vue";
-import ForbiddenPage from "@/components/pages/ForbiddenPage/ForbiddenPage.vue";
-import SettingsPage from "@/components/pages/SettingsPage/SettingsPage.vue";
-import ManagerActivityPage from "@/components/pages/services/ManagerActivityPage/ManagerActivityPage.vue";
+import IndexPage from "@/pages/IndexPage/IndexPage.vue";
+import RegisterPage from "@/pages/RegisterPage/RegisterPage.vue";
+import LoginPage from "@/pages/LoginPage/LoginPage.vue";
+import DashboardPage from "@/pages/DashboardPage/DashboardPage.vue";
+import ForbiddenPage from "@/pages/ForbiddenPage/ForbiddenPage.vue";
+import SettingsPage from "@/pages/SettingsPage/SettingsPage.vue";
+import ManagerActivityPage from "@/pages/Services/ManagerActivityPage/ManagerActivityPage.vue";
 import { useUserStore } from "@/stores/user";
 
 export const ROLES = {
@@ -15,10 +15,10 @@ export const ROLES = {
 }
 
 const routes = [
-  { path: '/', redirect: '/dashboard'},
+  { path: '/', redirect: '/dashboard', meta: { breadcrumb: "Главная" }},
   { 
     path: '/dashboard',
-    meta: { requiresAuth: true},
+    meta: {breadcrumb : "Дашборд"},
     children: [
       {
         path: '',
@@ -26,7 +26,7 @@ const routes = [
         component: DashboardPage,
         meta: { 
           roles: [ROLES.SUPER_ADMIN, ROLES.MARKETER, ROLES.SALES_MANAGER],
-          requiresAuth: true
+          requiresAuth: true,
         }
       },
       {
@@ -35,7 +35,8 @@ const routes = [
         component: ManagerActivityPage,
         meta: { 
           roles: [ROLES.SUPER_ADMIN, ROLES.MARKETER] ,
-          requiresAuth: true  
+          requiresAuth: true,
+          breadcrumb: "Активность менеджеров" 
         }
       }
     ]
