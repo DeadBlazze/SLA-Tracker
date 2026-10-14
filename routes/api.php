@@ -6,7 +6,7 @@ use App\Http\Controllers\AmoOAuthController;
 use App\Http\Controllers\AmoWebhookController;
 use App\Http\Controllers\MegafonWebhookController;
 use App\Http\Controllers\Dashboard\testController;
-use App\http\Controllers\Dashboard\AuthController;
+use App\Http\Controllers\Dashboard\AuthController;
 use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Middleware\JWTAuthMiddleware;
 use App\Http\Middleware\CheckRoleMiddleware;

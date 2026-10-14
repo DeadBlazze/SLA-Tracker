@@ -62,7 +62,7 @@ export default {
             this.errors = {}
             const payload = {login: this.form.email, password: this.form.password}
             try {
-                const response = await axios.post(import.meta.env.VITE_API + '/login', payload)
+                const response = await axios.post(import.meta.env.VITE_API + '/dashboard/login', payload)
                 const data = response?.data
 
                 // Проверяем наличие токена и role_id
