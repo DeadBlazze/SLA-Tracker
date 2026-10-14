@@ -16,4 +16,5 @@ class LeadRepository{
         $result = Lead::where("amo_lead_id",$data['amo_lead_id'])->update($data);
         return $result;
     }
+
 }

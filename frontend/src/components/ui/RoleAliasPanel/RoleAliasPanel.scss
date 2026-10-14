@@ -1,0 +1,10 @@
+.roleAliasPanel{
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+    .account__preview{
+        background-color: var(--color-accent);
+        color: white;
+        padding: 10px;
+    }
+}

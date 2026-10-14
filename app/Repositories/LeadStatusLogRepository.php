@@ -14,7 +14,28 @@ class LeadStatusLogRepository{
     public function insertOrIgnore($data){
         LeadStatusLog::insertOrIgnore($data);
     }
-    public function getManagersActivity($userIds){
+    public function getManagerActivity($userIds, $timestampFrom, $timestampTo){
+        return LeadStatusLog::query()
+        ->whereBetween('entered_at', [$timestampFrom, $timestampTo])
+        ->whereIn('user_id', $userIds)
+        ->orderBy('id', 'asc')
+        ->get();
+    }
+    public function getManagerActivityArchive($userIds, $timestampFrom, $timestampTo){
+        $sql = "SELECT * 
+            FROM lead_status_logs 
+            WHERE entered_at >= ?
+            AND entered_at <= ?";
+        $params = [$timestampFrom, $timestampTo];
+
+        $usersIdsPlaceholder = implode(',', array_fill(0, count($userIds), '?'));
+        $sql.=" AND user_id IN ($usersIdsPlaceholder)
+            ORDER BY id ASC";
+        foreach($userIds as $userId){
+            $params[] = $userId;
+        }
         
+        $rows = DB::select($sql, $params);
+        return $rows;
     }
 }

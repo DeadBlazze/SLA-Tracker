@@ -1,17 +1,5 @@
 .wrapper{
-    padding-top: 60px;
-    .account{
-        top: 0;
-        right: 20px;
-        position: absolute;
-        display: flex;
-        z-index: 10;
-        .account__preview{
-            background-color: var(--color-accent);
-            color: white;
-            padding: 10px;
-        }
-    }
+    padding-top: 10px;
     .services{
         display: grid;
         gap: 30px;

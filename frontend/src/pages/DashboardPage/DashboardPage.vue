@@ -5,7 +5,7 @@
             .service
                 .service__header
                     h3.service__title Аналитика рекламы
-                    ArrowTop.service__arrow(@click="console")
+                    ArrowTop.service__arrow(@click="")
                 p Сводный дашборд эффективности маркетинга с группировкой по рекламным источникам.
 
             .service
@@ -28,6 +28,7 @@
 <script>
 import ArrowTop from "@/assets/images/icons/arrowTop.svg?component";
 import { useUserStore } from '@/stores/user';
+import axios from "axios";
 export default{
     data(){
         return {
@@ -38,9 +39,7 @@ export default{
         ArrowTop: ArrowTop
     },
     methods:{
-        console(){
-            this.console.log(this.$route.matched)
-        }
+
     }
 }
 </script>

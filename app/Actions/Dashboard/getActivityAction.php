@@ -1,14 +1,40 @@
 <?php
 namespace App\Actions\Dashboard;
-use Illuminate\Support\Facades\DB;
+use App\Repositories\LeadRepository;
+use App\Repositories\LeadStatusLogRepository;
+use App\Support\AmoUsers;
+use App\Support\AmoPipelines;
+use Carbon\Carbon;
 class getActivityAction{
-    public function execute(){
-        $rows = DB::select('SELECT * 
-            FROM lead_status_logs 
-            WHERE entered_at >= "2026-10-13 12:18:11"
-            AND entered_at <= "2026-10-13 23:19:11" AND user_id IN ( 8038798, 8047285, 8047297, 12674562, 13970306, 13545438)
-            ORDER BY id ASC;');
-        return $rows;
-
+    public function __construct(
+        public LeadRepository $leads,
+        public LeadStatusLogRepository $leadLogs
+    ){}
+    private const USERS = AmoUsers::DATA['USERS'];
+    private const USERS_LABELS = AmoUsers::DATA['USERS_LABELS'];
+    private const STATUSES_LABELS = AmoPipelines::DATA['STATUSES_LABELS'];
+    public function execute($data){
+        $timestampFrom = Carbon::createFromTimestamp($data['timestampFrom'])->toDateTimeString();
+        $timestampTo = Carbon::createFromTimestamp($data['timestampTo'])->toDateTimeString();
+        
+        $rawLogs = $this->leadLogs->getManagerActivity(self::USERS, $timestampFrom, $timestampTo)->toArray();
+        
+        $logsGrouped = [];
+        
+        foreach($rawLogs as $log){
+            // 1. Определяем менеджера
+            $userId = $log['user_id'];
+            $managerLabel = self::USERS_LABELS[$userId] ?? "Менеджер ID {$userId}";
+            
+            // 2. Определяем статус
+            $pipelineId = $log['pipeline_id'];
+            $statusId = $log['status_id'];
+            $statusLabel = self::STATUSES_LABELS[$pipelineId][$statusId] ?? "Статус ID {$statusId}";
+            
+            // 3. Сразу собираем финальную структуру
+            $logsGrouped[$managerLabel][$statusLabel][] = $log;
+        }
+        
+        return $logsGrouped;
     }
 }

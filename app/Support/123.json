@@ -1,0 +1,80 @@
+{
+    "_total_items": 9,
+    "_page": 1,
+    "_page_count": 1,
+    "_links": {
+        "self": {
+            "href": "https://tkdvina.amocrm.ru/api/v4/users/?page=1&limit=250"
+        }
+    },
+    "_embedded": {
+        "users": [
+            {
+                "id": 8038798,
+                "name": "Администратор",
+                "email": "startsevmiron29@gmail.com",
+                "lang": "ru",
+                "_links": {
+                    "self": {
+                        "href": "https://tkdvina.amocrm.ru/api/v4/users/8038798/?page=1&limit=250"
+                    }
+                }
+            },
+            {
+                "id": 8047285,
+                "name": "Алексей Лукинский",
+                "email": "lukinskinskiyaleksey@gmail.com",
+                "lang": "ru",
+                "_links": {
+                    "self": {
+                        "href": "https://tkdvina.amocrm.ru/api/v4/users/8047285/?page=1&limit=250"
+                    }
+                }
+            },
+            {
+                "id": 8047297,
+                "name": "Дмитрий Верховцев",
+                "email": "twindv@mail.ru",
+                "lang": "ru",
+                "_links": {
+                    "self": {
+                        "href": "https://tkdvina.amocrm.ru/api/v4/users/8047297/?page=1&limit=250"
+                    }
+                }
+            },
+            {
+                "id": 12674562,
+                "name": "Пушкина Ксения",
+                "email": "nikita.tkdvina@gmail.com",
+                "lang": "ru",
+                "_links": {
+                    "self": {
+                        "href": "https://tkdvina.amocrm.ru/api/v4/users/12674562/?page=1&limit=250"
+                    }
+                }
+            },
+            {
+                "id": 13545438,
+                "name": "Лагунов Антон",
+                "email": "denis.tkdvina@gmail.com",
+                "lang": "ru",
+                "_links": {
+                    "self": {
+                        "href": "https://tkdvina.amocrm.ru/api/v4/users/13545438/?page=1&limit=250"
+                    }
+                }
+            },
+            {
+                "id": 13970306,
+                "name": "Алёна Алексеева",
+                "email": "amilaeva883@gmail.com",
+                "lang": "ru",
+                "_links": {
+                    "self": {
+                        "href": "https://tkdvina.amocrm.ru/api/v4/users/13970306/?page=1&limit=250"
+                    }
+                }
+            }
+        ]
+    }
+}

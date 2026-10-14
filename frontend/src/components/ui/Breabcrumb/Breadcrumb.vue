@@ -66,5 +66,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@use './breadcrumb' as *;
+@use './Breadcrumb.scss' as *;
 </style>

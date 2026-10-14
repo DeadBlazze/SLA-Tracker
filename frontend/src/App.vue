@@ -1,15 +1,15 @@
 <template lang="pug">
 Header
-Breadcrumb
+SubHeader
 router-view
 </template>
 <script>
 import Header from './components/layout/Header/Header.vue';
-import Breadcrumb from './components/ui/Breabcrumb/Breadcrumb.vue';
+import SubHeader from '@/components/ui/SubHeader/SubHeader.vue';
 export default {
   components: {
     Header: Header,
-    Breadcrumb: Breadcrumb
+    SubHeader: SubHeader
   },
   data() {
     return {

@@ -1,0 +1,338 @@
+{
+ "Пушкина Ксения": {
+  "0": {
+   "id": 1974,
+   "amo_lead_id": 29225051,
+   "pipeline_id": 9088966,
+   "old_status_id": 73139654,
+   "status_id": 73140342,
+   "user_id": 12674562,
+   "responsible_user_id": 12674562,
+   "entered_at": "2026-10-13 12:18:11",
+   "created_at": "2026-10-13T12:18:12.000000Z"
+  },
+  "1": {
+   "id": 1975,
+   "amo_lead_id": 29225051,
+   "pipeline_id": 9089018,
+   "old_status_id": 73139654,
+   "status_id": 73140050,
+   "user_id": 12674562,
+   "responsible_user_id": 12674562,
+   "entered_at": "2026-10-13 12:18:11",
+   "created_at": "2026-10-13T12:18:12.000000Z"
+  },
+  "2": {
+   "id": 1976,
+   "amo_lead_id": 29225051,
+   "pipeline_id": 9089018,
+   "old_status_id": 73139654,
+   "status_id": 73249794,
+   "user_id": 12674562,
+   "responsible_user_id": 12674562,
+   "entered_at": "2026-10-13 12:18:11",
+   "created_at": "2026-10-13T12:18:12.000000Z"
+  },
+  "3": {
+   "id": 1977,
+   "amo_lead_id": 29225051,
+   "pipeline_id": 9089018,
+   "old_status_id": 73139654,
+   "status_id": 73140058,
+   "user_id": 12674562,
+   "responsible_user_id": 12674562,
+   "entered_at": "2026-10-13 12:18:11",
+   "created_at": "2026-10-13T12:18:12.000000Z"
+  },
+  "4": {
+   "id": 1978,
+   "amo_lead_id": 29225051,
+   "pipeline_id": 9089018,
+   "old_status_id": 73140058,
+   "status_id": 73143094,
+   "user_id": 12674562,
+   "responsible_user_id": 12674562,
+   "entered_at": "2026-10-13 12:28:09",
+   "created_at": "2026-10-13T12:28:10.000000Z"
+  }
+ },
+ "Дмитрий Верховцев": {
+  "0": {
+   "id": 1981,
+   "amo_lead_id": 29225261,
+   "pipeline_id": 9088966,
+   "old_status_id": 73140050,
+   "status_id": 73140342,
+   "user_id": 8047297,
+   "responsible_user_id": 8047297,
+   "entered_at": "2026-10-13 13:11:55",
+   "created_at": "2026-10-13T13:11:56.000000Z"
+  },
+  "1": {
+   "id": 1982,
+   "amo_lead_id": 29225261,
+   "pipeline_id": 9089018,
+   "old_status_id": 73140050,
+   "status_id": 73140050,
+   "user_id": 8047297,
+   "responsible_user_id": 8047297,
+   "entered_at": "2026-10-13 13:11:55",
+   "created_at": "2026-10-13T13:11:56.000000Z"
+  },
+  "2": {
+   "id": 1983,
+   "amo_lead_id": 29225261,
+   "pipeline_id": 9089018,
+   "old_status_id": 73140050,
+   "status_id": 73249794,
+   "user_id": 8047297,
+   "responsible_user_id": 8047297,
+   "entered_at": "2026-10-13 13:11:55",
+   "created_at": "2026-10-13T13:11:56.000000Z"
+  },
+  "3": {
+   "id": 1984,
+   "amo_lead_id": 29225261,
+   "pipeline_id": 9089018,
+   "old_status_id": 73140050,
+   "status_id": 73140058,
+   "user_id": 8047297,
+   "responsible_user_id": 8047297,
+   "entered_at": "2026-10-13 13:11:55",
+   "created_at": "2026-10-13T13:11:56.000000Z"
+  },
+  "4": {
+   "id": 1985,
+   "amo_lead_id": 29225261,
+   "pipeline_id": 9089018,
+   "old_status_id": 73140050,
+   "status_id": 73143094,
+   "user_id": 8047297,
+   "responsible_user_id": 8047297,
+   "entered_at": "2026-10-13 13:11:55",
+   "created_at": "2026-10-13T13:11:56.000000Z"
+  },
+  "5": {
+   "id": 1986,
+   "amo_lead_id": 29225261,
+   "pipeline_id": 9089018,
+   "old_status_id": 73140050,
+   "status_id": 73143098,
+   "user_id": 8047297,
+   "responsible_user_id": 8047297,
+   "entered_at": "2026-10-13 13:11:55",
+   "created_at": "2026-10-13T13:11:56.000000Z"
+  },
+  "6": {
+   "id": 2011,
+   "amo_lead_id": 29225261,
+   "pipeline_id": 9089018,
+   "old_status_id": 73143098,
+   "status_id": 73143102,
+   "user_id": 8047297,
+   "responsible_user_id": 8047297,
+   "entered_at": "2026-10-13 14:31:25",
+   "created_at": "2026-10-13T14:31:26.000000Z"
+  }
+ },
+ "Алексей Лукинский": {
+  "0": {
+   "id": 2020,
+   "amo_lead_id": 29225419,
+   "pipeline_id": 9088966,
+   "old_status_id": 73140050,
+   "status_id": 73140342,
+   "user_id": 8047285,
+   "responsible_user_id": 8047285,
+   "entered_at": "2026-10-14 05:55:51",
+   "created_at": "2026-10-14T05:55:52.000000Z"
+  },
+  "1": {
+   "id": 2021,
+   "amo_lead_id": 29225419,
+   "pipeline_id": 9089018,
+   "old_status_id": 73140050,
+   "status_id": 73140050,
+   "user_id": 8047285,
+   "responsible_user_id": 8047285,
+   "entered_at": "2026-10-14 05:55:51",
+   "created_at": "2026-10-14T05:55:52.000000Z"
+  },
+  "2": {
+   "id": 2022,
+   "amo_lead_id": 29225419,
+   "pipeline_id": 9089018,
+   "old_status_id": 73140050,
+   "status_id": 73249794,
+   "user_id": 8047285,
+   "responsible_user_id": 8047285,
+   "entered_at": "2026-10-14 05:55:51",
+   "created_at": "2026-10-14T05:55:52.000000Z"
+  },
+  "3": {
+   "id": 2023,
+   "amo_lead_id": 29225419,
+   "pipeline_id": 9089018,
+   "old_status_id": 73140050,
+   "status_id": 73140058,
+   "user_id": 8047285,
+   "responsible_user_id": 8047285,
+   "entered_at": "2026-10-14 05:55:51",
+   "created_at": "2026-10-14T05:55:52.000000Z"
+  },
+  "4": {
+   "id": 2024,
+   "amo_lead_id": 29225419,
+   "pipeline_id": 9089018,
+   "old_status_id": 73140050,
+   "status_id": 73143094,
+   "user_id": 8047285,
+   "responsible_user_id": 8047285,
+   "entered_at": "2026-10-14 05:55:51",
+   "created_at": "2026-10-14T05:55:52.000000Z"
+  },
+  "5": {
+   "id": 2025,
+   "amo_lead_id": 29225419,
+   "pipeline_id": 9089018,
+   "old_status_id": 73140050,
+   "status_id": 73143098,
+   "user_id": 8047285,
+   "responsible_user_id": 8047285,
+   "entered_at": "2026-10-14 05:55:51",
+   "created_at": "2026-10-14T05:55:52.000000Z"
+  },
+  "6": {
+   "id": 2026,
+   "amo_lead_id": 29225419,
+   "pipeline_id": 9089018,
+   "old_status_id": 73140050,
+   "status_id": 73143102,
+   "user_id": 8047285,
+   "responsible_user_id": 8047285,
+   "entered_at": "2026-10-14 05:55:51",
+   "created_at": "2026-10-14T05:55:52.000000Z"
+  },
+  "7": {
+   "id": 2031,
+   "amo_lead_id": 29226663,
+   "pipeline_id": 9088966,
+   "old_status_id": 73140050,
+   "status_id": 73140342,
+   "user_id": 8047285,
+   "responsible_user_id": 8047285,
+   "entered_at": "2026-10-14 06:15:22",
+   "created_at": "2026-10-14T06:15:23.000000Z"
+  },
+  "8": {
+   "id": 2032,
+   "amo_lead_id": 29226663,
+   "pipeline_id": 9089018,
+   "old_status_id": 73140050,
+   "status_id": 73140050,
+   "user_id": 8047285,
+   "responsible_user_id": 8047285,
+   "entered_at": "2026-10-14 06:15:22",
+   "created_at": "2026-10-14T06:15:23.000000Z"
+  },
+  "9": {
+   "id": 2033,
+   "amo_lead_id": 29226663,
+   "pipeline_id": 9089018,
+   "old_status_id": 73140050,
+   "status_id": 73249794,
+   "user_id": 8047285,
+   "responsible_user_id": 8047285,
+   "entered_at": "2026-10-14 06:15:22",
+   "created_at": "2026-10-14T06:15:23.000000Z"
+  },
+  "10": {
+   "id": 2034,
+   "amo_lead_id": 29226663,
+   "pipeline_id": 9089018,
+   "old_status_id": 73140050,
+   "status_id": 73140058,
+   "user_id": 8047285,
+   "responsible_user_id": 8047285,
+   "entered_at": "2026-10-14 06:15:22",
+   "created_at": "2026-10-14T06:15:23.000000Z"
+  },
+  "11": {
+   "id": 2035,
+   "amo_lead_id": 29226663,
+   "pipeline_id": 9089018,
+   "old_status_id": 73140050,
+   "status_id": 73143094,
+   "user_id": 8047285,
+   "responsible_user_id": 8047285,
+   "entered_at": "2026-10-14 06:15:22",
+   "created_at": "2026-10-14T06:15:23.000000Z"
+  },
+  "12": {
+   "id": 2062,
+   "amo_lead_id": 29224931,
+   "pipeline_id": 9088966,
+   "old_status_id": 73140050,
+   "status_id": 73140342,
+   "user_id": 8047285,
+   "responsible_user_id": 8047285,
+   "entered_at": "2026-10-14 08:24:36",
+   "created_at": "2026-10-14T08:24:37.000000Z"
+  },
+  "13": {
+   "id": 2063,
+   "amo_lead_id": 29224931,
+   "pipeline_id": 9089018,
+   "old_status_id": 73140050,
+   "status_id": 73140050,
+   "user_id": 8047285,
+   "responsible_user_id": 8047285,
+   "entered_at": "2026-10-14 08:24:36",
+   "created_at": "2026-10-14T08:24:37.000000Z"
+  },
+  "14": {
+   "id": 2064,
+   "amo_lead_id": 29224931,
+   "pipeline_id": 9089018,
+   "old_status_id": 73140050,
+   "status_id": 73249794,
+   "user_id": 8047285,
+   "responsible_user_id": 8047285,
+   "entered_at": "2026-10-14 08:24:36",
+   "created_at": "2026-10-14T08:24:37.000000Z"
+  },
+  "15": {
+   "id": 2065,
+   "amo_lead_id": 29224931,
+   "pipeline_id": 9089018,
+   "old_status_id": 73140050,
+   "status_id": 73140058,
+   "user_id": 8047285,
+   "responsible_user_id": 8047285,
+   "entered_at": "2026-10-14 08:24:36",
+   "created_at": "2026-10-14T08:24:37.000000Z"
+  },
+  "16": {
+   "id": 2066,
+   "amo_lead_id": 29224931,
+   "pipeline_id": 9089018,
+   "old_status_id": 73140050,
+   "status_id": 73143094,
+   "user_id": 8047285,
+   "responsible_user_id": 8047285,
+   "entered_at": "2026-10-14 08:24:36",
+   "created_at": "2026-10-14T08:24:37.000000Z"
+  },
+  "17": {
+   "id": 2067,
+   "amo_lead_id": 29224931,
+   "pipeline_id": 9089018,
+   "old_status_id": 73140050,
+   "status_id": 73143098,
+   "user_id": 8047285,
+   "responsible_user_id": 8047285,
+   "entered_at": "2026-10-14 08:24:36",
+   "created_at": "2026-10-14T08:24:37.000000Z"
+  }
+ }
+}
