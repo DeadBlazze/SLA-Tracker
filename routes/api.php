@@ -18,7 +18,7 @@ Route::post('/dashboard/get-managers-activity', [DashboardController::class, 'ge
 ->middleware(['jwt', 'role:1,2']);
 
 Route::post('/test', [testController::class, 'index'])
-->middleware(['jwt', 'role:1,2,3']);
+->middleware(['jwtAuth', 'roleCheck:1,2,3']);
 
 // Amowebhooks
 Route::post('/oauth/callback', [AmoOAuthController::class, 'callback']);

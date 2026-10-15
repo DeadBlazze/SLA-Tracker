@@ -1,6 +1,6 @@
 <template lang="pug">
 .roleAliasPanel
-    .account__preview
+    .account__preview(v-if="roleAlias || profilePreview")
         p {{roleAlias}}
         p {{profilePreview}}
 </template>

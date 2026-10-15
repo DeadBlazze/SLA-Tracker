@@ -1,5 +1,5 @@
 <template lang="pug">
-nav.breadcrumbs(aria-label="Хлебные крошки" v-if="breadcrumbs.length > 1")
+nav.breadcrumbs(aria-label="Хлебные крошки" v-if="breadcrumbs.length >= 1")
   ol.breadcrumbs__list
     li.breadcrumbs__item(
       v-for="(crumb, index) in breadcrumbs" 

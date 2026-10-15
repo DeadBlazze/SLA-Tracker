@@ -15,7 +15,7 @@ export const ROLES = {
 }
 
 const routes = [
-  { path: '/', redirect: '/dashboard', meta: { breadcrumb: "Главная" }},
+  { path: '/', redirect: '/dashboard', meta: {breadcrumb: "Главная"}},
   { 
     path: '/dashboard',
     meta: {breadcrumb : "Дашборд"},
@@ -42,9 +42,9 @@ const routes = [
     ]
   },
   { path: '/register', component: RegisterPage},
-  { path: '/login', component: LoginPage},
-  { path: '/settings', component: SettingsPage},
-  { path: '/forbidden', component: ForbiddenPage}
+  { path: '/login', component: LoginPage, meta: {breadcrumb : "Авторизация"}},
+  { path: '/settings', component: SettingsPage, meta: {breadcrumb : "Настройки"}},
+  { path: '/forbidden', component: ForbiddenPage, meta: {breadcrumb : "forbidden"}}
 ]
 
 const router = createRouter({
