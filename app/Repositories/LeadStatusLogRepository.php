@@ -11,6 +11,16 @@ class LeadStatusLogRepository{
         }
         return $result;
     }
+    public function insert($data){
+        LeadStatusLog::insert($data);
+    }
+    public function upsertByUniqueIndex($data){
+        LeadStatusLog::upsert(
+            $data,
+            ['lead_pipeline_status_unique'],
+            ['id' => DB::raw('id')]
+        );
+    }
     public function insertOrIgnore($data){
         LeadStatusLog::insertOrIgnore($data);
     }

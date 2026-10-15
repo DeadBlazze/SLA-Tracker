@@ -9,7 +9,7 @@ use Carbon\Carbon;
 use GuzzleHttp\Client;
 use App\Services\amoCRM\ResolveLeadSourceService;
 use Illuminate\Support\Facades\DB;
-
+use App\Support\AmoPipelines;
 
 class UpdateStatusAction{
     public function __construct(
@@ -17,29 +17,9 @@ class UpdateStatusAction{
         private LeadStatusLogRepository $leadStatusLogs,
         private ResolveLeadSourceService $leadSourceResolver
     ) {}
-    private const PIPELINES_ORDER = [
-        9088966, // 1. Сначала идет «Квалификация v.1»
-        9089018, // 2. Затем «Заказы v.1»
-    ];
 
-    private const TRACKED_PIPELINES_STATUSES = [
-        // 1. Квалификация v.1
-        9088966 => [
-            73140342 => 732013, // Взяли в работу
-        ],
-
-        // 2. Заказы v.1
-        9089018 => [
-            73140050 => 731999, // Квалифицирован
-            73249794 => 731997, // КП отправлено
-            73140058 => 732001, // Данные исполнителю отправлены
-            73143094 => 732003, // 24 час до реализации
-            73143098 => 732005, // Начали реализацию
-            73143102 => 732007, // Закончили реализацию
-            142      => 732009, // Успешно реализовано
-            143      => 732011, // Закрыто и не реализовано
-        ]
-    ]; 
+    private const PIPELINES_ORDER = AmoPipelines::DATA['PIPELINES_ORDER'];
+    private const TRACKED_PIPELINES_STATUSES = AmoPipelines::DATA['TRACKED_PIPELINES_STATUSES'];
     
     public function handle($lead){
         $leadId = !empty($lead['id']) ? (int) $lead['id'] : null;
@@ -156,7 +136,7 @@ class UpdateStatusAction{
             // Обработка ошибки добавления лога по внешнему ключу на amo_lead_id
             try{
                 DB::transaction(function () use ($dbLeadData, $dbStatusLogs) {
-                    $this->leadStatusLogs->insertOrIgnore($dbStatusLogs);
+                    $this->leadStatusLogs->upsertByUniqueIndex($dbStatusLogs);
                     $this->leads->update($dbLeadData);
                 });
             }catch(\Illuminate\Database\QueryException $e){
@@ -175,21 +155,21 @@ class UpdateStatusAction{
                     }
                     $responseData = json_decode((string) $response->getBody(), true);
                     $events = $responseData['_embedded']['events'];
-                    usort($events, fn ($a, $b) => $a['created_at'] <=> $b['created_at']);
-                    $currentStatusId = array_last($events)['value_after'][0]['lead_status']['id'];
-                    $currentPipelineId = array_last($events)['value_after'][0]['lead_status']['pipeline_id'];
-                    $eventsMapByCustomId = [];
-                    foreach($events as $event){
-                        $eventsMapByCustomId[$event['value_after'][0]['lead_status']['id']] = [
-                            $event['created_at']
-                        ];
+                    // usort($events, fn ($a, $b) => $a['created_at'] <=> $b['created_at']);
+                    // $currentStatusId = array_last($events)['value_after'][0]['lead_status']['id'];
+                    // $currentPipelineId = array_last($events)['value_after'][0]['lead_status']['pipeline_id'];
+                    $eventsMapByAmoId = [];
+                    foreach(array_reverse($events) as $event){
+                        $lead_status = $event['value_after'][0]['lead_status'];
+                        $eventsMapByAmoId[$lead_status['pipeline_id']][$lead_status['id']] 
+                            = $eventsMapByAmoId[$lead_status['pipeline_id']][$lead_status['id']] ?? $event['created_at'];
                     }
 
                     $flatCustomFields = [];
                     $i = 0;
                     foreach (self::TRACKED_PIPELINES_STATUSES as $pipelineId => $statuses) {
                         foreach ($statuses as $statusId => $customId) {
-                            $timestamp = $eventsMapByCustomId[$statusId][0] ?? null;
+                            $timestamp = $eventsMapByAmoId[$pipelineId][$statusId] ?? null;
                             $dateTime = !empty($timestamp) 
                                 ? Carbon::createFromTimestamp($timestamp)->toIso8601String() 
                                 : null;
