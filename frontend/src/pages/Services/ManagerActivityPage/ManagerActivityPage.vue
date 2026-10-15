@@ -3,11 +3,11 @@
     .wrapper
         h1 Сводка по менеджерам
         
-        .settings-page__sections
-            section.settings-section
-                h2.settings-section__title Период отчета
-                p.settings-section__desc Выберите даты для загрузки логов из базы
-                .settings-section__content
+        .manager-activity__sections
+            section.time-select
+                h2.time-select__title Период отчета
+                p.time-select__desc Выберите даты для загрузки логов из базы
+                .time-select__content
                     .date-filter
                         .date-filter__inputs
                             .date-filter__group
@@ -34,9 +34,9 @@
                         
                         span.error(v-if="!isDatesValid") ошибка
             // Блок для вывода ответа
-            section.activity-section(v-if="activityData")
-                h2.activity-section__title Результаты
-                .activity-section__content
+            section.stats(v-if="activityData")
+                h2.stats__title Результаты
+                .stats__content
                     .manager-card(v-for="(statuses, managerName) in activityData" :key="managerName")
                         h3.manager-card__name {{ managerName }}
                         
@@ -49,7 +49,7 @@
                                 ul.status-group__list
                                     li.lead-item(v-for="lead in leads" :key="lead.id")
                                         a(:href="`https://tkdvina.amocrm.ru/leads/detail/${lead.amo_lead_id}`" target="_blank")
-                                            span.lead-item__id ID сделки: {{ lead.amo_lead_id }}
+                                            span.lead-item__id ID: {{ lead.amo_lead_id }}
                                         span.lead-item__time {{ new Date(lead.entered_at).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }) }}
 
 </template>
