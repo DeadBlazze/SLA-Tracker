@@ -10,7 +10,7 @@ class AmoWebhookController {
         return response()->json(['status' => 'ok'],200);
     }
     public function restore(Request $request, RestoreStatusLogsAction $action){
-        $action->execute($request->all());
+        $action->execute($request->input("id"));
         return response()->json(['status' => 'ok'],200);
     }
 }

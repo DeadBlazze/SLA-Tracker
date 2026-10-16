@@ -15,9 +15,10 @@ class AmoFieldsAndStatusLogsFactory{
      * @param array $logsCap
      * @param array $flatCustomFields
      * @param Carbon $now
+     * @param bool $isRestoration Флаг принудительного сбора данных для восстановления истории
      * @return array{amoFieldsToUpdate: array, dbStatusLogs: array}
      */
-    public function get(int $currentPipelineIndex, int $currentPipelineId, array $logsCap, array $flatCustomFields, Carbon $now): array {
+    public function get(int $currentPipelineIndex, int $currentPipelineId, array $logsCap, array $flatCustomFields, Carbon $now, bool $isRestoration = false): array {
         $amoFieldsToUpdate = [];
         $dbStatusLogs = [];
         $flatIndex = 0;
@@ -33,7 +34,7 @@ class AmoFieldsAndStatusLogsFactory{
             foreach ($steps as $stepStatusId => $customFieldId) {
                 $currentDate = $flatCustomFields[$flatIndex][0] ?? null;
 
-                if (!$currentDate) {
+                if (!$currentDate || $isRestoration) {
                     // Ищем ближайшую непустую метку: сначала вперед, если нет — назад
                     $metka = null;
 
