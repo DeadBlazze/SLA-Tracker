@@ -62,7 +62,6 @@ class RestoreStatusLogsAction{
             "amo_source_id" => $leadData['_embedded']['source']['id'] ?? null,
             "created_at" => Carbon::createFromTimestamp($leadData['created_at'])->toDateTimeString(),
         ];
-        $dbStatusLogs = [];
         $logsCap = [
             'amo_lead_id'         => $leadData['id'],
             'pipeline_id'         => $currentPipelineId,
@@ -93,7 +92,7 @@ class RestoreStatusLogsAction{
         foreach($leadData['custom_fields_values'] ?? [] as $field){
             $customFields[$field['field_id']] = $field['values'][0] ?? null;
         }
-        $dbLeadData['net_profit'] = $customFields[685511] ?? 0;
+        $dbLeadData['net_profit'] = $customFields[685511]['value'] ?? 0;
 
         // Заполняем $dbLeadData и $amoFieldsToInsert
         $promo_source = [
@@ -131,18 +130,19 @@ class RestoreStatusLogsAction{
         foreach(array_reverse($events) as $event){
             $lead_status = $event['value_after'][0]['lead_status'];
             $eventsMapByAmoId[$lead_status['pipeline_id']][$lead_status['id']] 
-                = $eventsMapByAmoId[$lead_status['pipeline_id']][$lead_status['id']] ?? $event['created_at'];
+                = $eventsMapByAmoId[$lead_status['pipeline_id']][$lead_status['id']] ?? ["timestamp"=>$event['created_at'], "user_id"=>$event['created_by']];
         }
         $flatCustomFields = [];
         $i = 0;
         foreach (self::TRACKED_PIPELINES_STATUSES as $pipelineId => $statuses) {
             foreach ($statuses as $statusId => $customId) {
-                $timestamp = $eventsMapByAmoId[$pipelineId][$statusId] ?? null;
+                $timestamp = $eventsMapByAmoId[$pipelineId][$statusId]['timestamp'] ?? null;
+                $user_id = $eventsMapByAmoId[$pipelineId][$statusId]['user_id'] ?? null;
                 $dateTime = !empty($timestamp) 
                     ? Carbon::createFromTimestamp($timestamp)->toIso8601String() 
                     : null;
-
-                $flatCustomFields[] = [$dateTime, $customId];
+                
+                $flatCustomFields[] = ["datetime" => $dateTime, "customId" => $customId, "user_id"=>$user_id];
                 $i++;
                 // Прерываем оба цикла, когда дошли до текущей точки сделки
                 if ($pipelineId == $currentPipelineId && $statusId == $currentStatusId) {
@@ -151,9 +151,9 @@ class RestoreStatusLogsAction{
             }
         }
         $currentPipelineIndex = array_search($currentPipelineId, self::PIPELINES_ORDER, true);
-        $result = $this->amoCustomFieldsAndLogs->get($currentPipelineIndex, $currentPipelineId, $logsCap, $flatCustomFields, $now);
-        $amoFieldsToUpdate[] = $result['amoFieldsToUpdate'];
-        $dbStatusLogs      = $result['dbStatusLogs'];
+        $result = $this->amoCustomFieldsAndLogs->get($currentPipelineIndex, $currentPipelineId, $logsCap, $flatCustomFields, $now, true);
+        array_push($amoFieldsToUpdate, ...$result['amoFieldsToUpdate']);
+        $dbStatusLogs = $result['dbStatusLogs'];
         
         $response = $client->patch("/api/v4/leads/{$leadId}", [
             'headers' => [
@@ -169,7 +169,6 @@ class RestoreStatusLogsAction{
                 $result0 = $this->leads->upsert($dbLeadData);
                 $result = $this->leadStatusLogs->insertOrIgnore($dbStatusLogs);
             });
-            error_log(123);
         }
         return;
     }
