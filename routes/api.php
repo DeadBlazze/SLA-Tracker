@@ -17,15 +17,15 @@ Route::post('/dashboard/login', [AuthController::class, 'login']);
 Route::post('/dashboard/get-managers-activity', [DashboardController::class, 'getManagersActivity'])
 ->middleware(['jwtAuth', 'roleCheck:1,2']);
 
-Route::post('/test', [testController::class, 'index'])
-->middleware(['jwtAuth', 'roleCheck:1,2,3']);
+// Route::post('/test', [testController::class, 'index'])
+// ->middleware(['jwtAuth', 'roleCheck:1,2,3']);
 
 // Amowebhooks
 Route::post('/oauth/callback', [AmoOAuthController::class, 'callback']);
 Route::prefix('/webhooks/amo')->group(function () {
     // Единый эндпоинт для обработки всех вебхуков (смена статуса, создание сделки)
     Route::post('/', [AmoWebhookController::class, 'handle']);
-    Route::post('/restore', [AmoWebhookController::class, 'restore']);
+    // Route::post('/restore', [AmoWebhookController::class, 'restore']);
 });
 
 // МегаФон АТС
