@@ -17,7 +17,7 @@
                 button.button--primary(type="submit" @click.prevent='handleLogin') Войти
 </template>
 <script>
-import axios from 'axios';
+import { api } from '@/api/api';
 import { toast } from 'vue3-toastify'
 import { useUserStore } from '@/stores/user';
 export default {
@@ -62,7 +62,7 @@ export default {
             this.errors = {}
             const payload = {login: this.form.email, password: this.form.password}
             try {
-                const response = await axios.post(import.meta.env.VITE_API + '/dashboard/login', payload)
+                const response = await api.post('/dashboard/login', payload)
                 const data = response?.data
 
                 // Проверяем наличие токена и role_id
