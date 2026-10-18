@@ -32,28 +32,31 @@ class AmoFieldsAndStatusLogsFactory{
             $isCurrentPipeline = ($pipelineId === $currentPipelineId);
 
             foreach ($steps as $stepStatusId => $customFieldId) {
-                $currentDate = $flatCustomFields[$flatIndex][0] ?? null;
+                $currentDate = $flatCustomFields[$flatIndex]["datetime"] ?? null;
 
                 if (!$currentDate || $isRestoration) {
                     // Ищем ближайшую непустую метку: сначала вперед, если нет — назад
-                    $metka = null;
-
-                    for ($i = $flatIndex + 1; $i < count($flatCustomFields); $i++) {
-                        if ($flatCustomFields[$i][0]) {
-                            $metka = $flatCustomFields[$i][0];
-                            break;
-                        }
-                    }
+                    $metka = $currentDate;
 
                     if (!$metka) {
-                        for ($i = $flatIndex - 1; $i >= 0; $i--) {
-                            if ($flatCustomFields[$i][0]) {
-                                $metka = $flatCustomFields[$i][0];
+                        for ($i = $flatIndex + 1; $i < count($flatCustomFields); $i++) {
+                            if ($flatCustomFields[$i]["datetime"]) {
+                                $metka = $flatCustomFields[$i]["datetime"];
                                 break;
                             }
                         }
+
+                        if (!$metka) {
+                            for ($i = $flatIndex - 1; $i >= 0; $i--) {
+                                if ($flatCustomFields[$i]["datetime"]) {
+                                    $metka = $flatCustomFields[$i]["datetime"];
+                                    break;
+                                }
+                            }
+                        }
+                        if (!$metka) $metka = $logsCap['entered_at_iso'];
                     }
-                    if(!$metka) $metka = $logsCap['entered_at_iso'];
+
                     $amoFieldsToUpdate[] = [
                         'field_id' => $customFieldId,
                         'values'   => [
@@ -66,9 +69,9 @@ class AmoFieldsAndStatusLogsFactory{
                         'pipeline_id'         => $pipelineId,
                         'old_status_id'       => $logsCap['old_status_id'],
                         'status_id'           => $stepStatusId,
-                        'user_id'             => $logsCap['user_id'],
+                        'user_id'             => $flatCustomFields[$flatIndex]["user_id"],
                         'responsible_user_id' => $logsCap['responsible_user_id'],
-                        'entered_at'          => $logsCap['entered_at'],
+                        'entered_at'          => $metka ?? $logsCap['entered_at'],
                         'created_at'          => $now->toDateTimeString(),
                     ];
                 }

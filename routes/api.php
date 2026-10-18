@@ -15,7 +15,7 @@ Route::get('/', fn () => response()->json(['Данный enpoint не подде
 
 Route::post('/dashboard/login', [AuthController::class, 'login']);
 Route::post('/dashboard/get-managers-activity', [DashboardController::class, 'getManagersActivity'])
-->middleware(['jwt', 'role:1,2']);
+->middleware(['jwtAuth', 'roleCheck:1,2']);
 
 Route::post('/test', [testController::class, 'index'])
 ->middleware(['jwtAuth', 'roleCheck:1,2,3']);
