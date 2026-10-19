@@ -11,7 +11,7 @@ use Throwable;
 
 class AmoLogsBackfillCommand extends Command
 {
-    protected $signature = 'amo:backfill {--file=storage\app\private\leads.txt : Путь к файлу со сделками} {--sleep=300 : Задержка между сделками в миллисекундах} {--limit=} {--offset=}';
+    protected $signature = 'amo:backfill {--file=storage\app\private\leads.txt : Путь к файлу со сделками} {--sleep=300 : Задержка между сделками в миллисекундах} {--limit=} {--offset=0}';
     protected $description = 'Прямой синхронный бэкфилл сделок через RestoreStatusLogsAction без очередей';
 
     public function handle(RestoreStatusLogsAction $restoreAction)
@@ -53,7 +53,7 @@ class AmoLogsBackfillCommand extends Command
                     'error' => $e->getMessage()
                 ];
                 $this->newLine();
-                $this->error("Ошибка на сделке {$leadId}: {$e->getMessage()}");
+                $this->error("{$e->getMessage()}");
             }
 
             $bar->advance();
@@ -62,6 +62,16 @@ class AmoLogsBackfillCommand extends Command
             if ($sleepMs > 0 && $index < $count - 1) {
                 usleep($sleepMs * 1000);
             }
+        }
+        $bar->finish();
+        $this->newLine(2);
+
+        $this->info("Обработка завершена. Успешно: {$successCount}, Ошибок: {$failCount}.");
+        // Сохраняем сбойные ID в отдельный файл для повторного прогона
+        if (!empty($failedIds)) {
+            $failLogPath = storage_path('failed_backfill_ids.json');
+            File::put($failLogPath, json_encode($failedIds, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+            $this->warn("Список сбойных сделок сохранен в: {$failLogPath}");
         }
         return self::SUCCESS;
     }

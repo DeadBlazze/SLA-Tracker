@@ -38,13 +38,16 @@ class RestoreStatusLogsAction{
                 ],
             ]);
         } catch (RequestException $e) {
-            Log::error("Таймаут или сетевая ошибка amoCRM: " . $e->getMessage());
-            return;
+            // Можно оставить лог, если он нужен для истории, но главное — пробросить ошибку дальше
+            Log::error("Таймаут или сетевая ошибка amoCRM для сделки {$leadId}: " . $e->getMessage());
+            
+            throw new \RuntimeException("Ошибка HTTP запроса при получении сделки {$leadId}: " . $e->getMessage(), $e->getCode(), $e);
         }
         if ($response->getStatusCode() === 204) {
-            Log::warning("Сделка {$leadId} вернула пустой ответ (HTTP 204 No Content)");
-            return;
+            // 204 не вызывает RequestException, поэтому проверяем вручную и тоже бросаем Exception
+            throw new \RuntimeException("Сделка {$leadId} не найдена или вернула пустой ответ (HTTP 204)");
         }
+        
         $leadData = json_decode((string) $response->getBody(), true);
 
         $currentPipelineId = (int) $leadData['pipeline_id'] ?? 0;
