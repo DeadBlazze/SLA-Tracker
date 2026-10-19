@@ -93,10 +93,16 @@
     }
 
     &__content {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        overflow-x: auto;
+        display: flex;
         gap: 24px;
+        padding-bottom: 20px;
+        align-items: flex-end;
+        transform: rotateX(180deg);
         .manager-card {
+            transform: rotateX(180deg);
+            width: 300px;
+            flex-shrink: 0;
             background: var(--color-bg2);
             border-radius: 12px;
             padding: 24px;
