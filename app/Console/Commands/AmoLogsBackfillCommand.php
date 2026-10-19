@@ -18,7 +18,7 @@ class AmoLogsBackfillCommand extends Command
     {
         $filePath = $this->option('file');
         $ids = $this->loadIdsFromFile($filePath);
-        if(!$ids) return
+        if(!$ids) return;
         $totalFound = count($ids);
 
         $limit = $this->option('limit') ? (int) $this->option('limit') : null;
