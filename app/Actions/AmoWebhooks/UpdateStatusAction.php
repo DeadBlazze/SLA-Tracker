@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use App\Support\AmoPipelines;
 use App\Actions\AmoWebhooks\RestoreStatusLogsAction;
 use App\Services\amoCRM\AmoFieldsAndStatusLogsFactory;
+use Illuminate\Support\Facades\File;
 class UpdateStatusAction{
     public function __construct(
         private LeadRepository $leads,
@@ -28,11 +29,17 @@ class UpdateStatusAction{
     public function handle($lead){
         $leadId = !empty($lead['id']) ? (int) $lead['id'] : null;
         if(!$leadId) return Log::warning('AmoWebhook: Lead payload without valid ID', ['payload' => $lead]);
+        $now = Carbon::now('UTC');
+
+        // Лог запросов updateLead
+        $datetime = now()->toDateTimeString();
+        $logLine = "[$datetime] $lead" . PHP_EOL;
+        $path = storage_path('logs/UpdateAmoRequests.log');
+        File::append($path, $logLine);
 
         $currentPipelineId = (int) $lead['pipeline_id'] ?? 0;
         $currentStatusId = (int) $lead['status_id'];
         $oldStatusId = $lead['old_status_id'] ?? null;
-        $now = Carbon::now('UTC');
         
         $amoFieldsToUpdate = [];
         $dbLeadData = [
