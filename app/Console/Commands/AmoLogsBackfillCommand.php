@@ -11,12 +11,13 @@ use Throwable;
 
 class AmoLogsBackfillCommand extends Command
 {
-    protected $signature = 'amo:backfill {--file=storage\app\private\leads.txt : Путь к файлу со сделками} {--sleep=300 : Задержка между сделками в миллисекундах} {--limit=} {--offset=0}';
+    protected $signature = 'amo:backfill {--file=storage/app/private/leads.txt : Путь к файлу со сделками} {--sleep=300 : Задержка между сделками в миллисекундах} {--limit=} {--offset=0}';
     protected $description = 'Прямой синхронный бэкфилл сделок через RestoreStatusLogsAction без очередей';
 
     public function handle(RestoreStatusLogsAction $restoreAction)
     {
         $filePath = $this->option('file');
+        $this->info($filePath);
         $ids = $this->loadIdsFromFile($filePath);
         if(!$ids) return;
         $totalFound = count($ids);
