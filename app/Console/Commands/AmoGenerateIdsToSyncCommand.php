@@ -11,18 +11,17 @@ use Illuminate\Support\Facades\DB;
 
 class AmoGenerateIdsToSyncCommand extends Command
 {
-    protected $signature = 'amo:genIdsToSync {--hours= : Период восставновления истории в часах}';
+    protected $signature = 'amo:genIdsToSync {--timestamp= : Начало сбора id timestamp}';
     protected $description = 'Генерация пулла id сделок для восстановления истории статусов';
 
     public function handle()
     {
-        $hoursCount = $this->option('hours');
-        if(!$hoursCount){
-            $this->error('Не передано количество часов int');
+        $startTimestamp = $this->option('timestamp');
+        if(!$startTimestamp){
+            $this->error('Не передано начало сбора id timestamp');
             return;
         }
         
-        $lastSyncTimestamp = now()->subHours($hoursCount)->timestamp;
         $page = 1;
 
         while (true) {
@@ -50,7 +49,7 @@ class AmoGenerateIdsToSyncCommand extends Command
             $shouldStopPaginating = false;
 
             foreach ($leadsChunk as $lead) {
-                if ($lead['updated_at'] < $lastSyncTimestamp) {
+                if ($lead['updated_at'] < $startTimestamp) {
                     $shouldStopPaginating = true;
                     break; // Выходим из цикла foreach
                 }
