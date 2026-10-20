@@ -23,8 +23,11 @@ class AmoFieldsAndStatusLogsFactory{
         $dbStatusLogs = [];
         $flatIndex = 0;
 
+        // Флаг, указывающий, что мы перешли к статусам, которые находятся "в будущем"
+        $isFutureStage = false;
+
         foreach (self::PIPELINES_ORDER as $index => $pipelineId) {
-            if ($index > $currentPipelineIndex) {
+            if ($index > $currentPipelineIndex && !$isRestoration) {
                 break;
             }
 
@@ -32,6 +35,13 @@ class AmoFieldsAndStatusLogsFactory{
             $isCurrentPipeline = ($pipelineId === $currentPipelineId);
 
             foreach ($steps as $stepStatusId => $customFieldId) {
+                if ($isFutureStage && $isRestoration) {
+                    $amoFieldsToUpdate[] = [
+                        'field_id' => $customFieldId,
+                        'values'   => null, // Отправляем null, чтобы очистить поле в AmoCRM
+                    ];
+                    continue;
+                }
                 $currentDate = $flatCustomFields[$flatIndex]["datetime"] ?? null;
 
                 if (!$currentDate || $isRestoration) {
@@ -57,6 +67,31 @@ class AmoFieldsAndStatusLogsFactory{
                         if (!$metka) $metka = $logsCap['entered_at_iso'];
                     }
 
+                    // Ищем инициатора перехода (user_id) по тому же принципу
+                    $syntheticUserId = $flatCustomFields[$flatIndex]["user_id"] ?? null;
+                    
+                    if (!$syntheticUserId) {
+                        for ($i = $flatIndex + 1; $i < count($flatCustomFields); $i++) {
+                            if (!empty($flatCustomFields[$i]["user_id"])) {
+                                $syntheticUserId = $flatCustomFields[$i]["user_id"];
+                                break;
+                            }
+                        }
+                        
+                        if (!$syntheticUserId) {
+                            for ($i = $flatIndex - 1; $i >= 0; $i--) {
+                                if (!empty($flatCustomFields[$i]["user_id"])) {
+                                    $syntheticUserId = $flatCustomFields[$i]["user_id"];
+                                    break;
+                                }
+                            }
+                        }
+                        
+                        if (!$syntheticUserId) {
+                            $syntheticUserId = $logsCap['responsible_user_id'] ?? null;
+                        }
+                    }
+
                     $amoFieldsToUpdate[] = [
                         'field_id' => $customFieldId,
                         'values'   => [
@@ -69,7 +104,7 @@ class AmoFieldsAndStatusLogsFactory{
                         'pipeline_id'         => $pipelineId,
                         'old_status_id'       => $logsCap['old_status_id'],
                         'status_id'           => $stepStatusId,
-                        'user_id'             => $flatCustomFields[$flatIndex]["user_id"],
+                        'user_id'             => $syntheticUserId,
                         'responsible_user_id' => $logsCap['responsible_user_id'],
                         'entered_at'          => $metka ?? $logsCap['entered_at'],
                         'created_at'          => $now->toDateTimeString(),
@@ -78,7 +113,12 @@ class AmoFieldsAndStatusLogsFactory{
 
                 // Дошли до текущего статуса — дальше не идем
                 if ($isCurrentPipeline && (self::TRACKED_PIPELINES_STATUSES[$pipelineId][$logsCap['status_id']] ?? null) === $customFieldId) {
-                    break 2;
+                    if ($isRestoration) {
+                        // Переключаем флаг, чтобы следующие поля занулились
+                        $isFutureStage = true; 
+                    } else {
+                        break 2; 
+                    }
                 }
 
                 $flatIndex++;

@@ -11,11 +11,12 @@ use Illuminate\Support\Facades\DB;
 
 class AmoGenerateIdsToSyncCommand extends Command
 {
-    protected $signature = 'amo:genIdsToSync {--timestamp= : Начало сбора id timestamp}';
+    protected $signature = 'amo:genIdsToSync {--timestamp= : Начало сбора id timestamp --allowRewriteExists=false : Пускать в обновлении уже существующие id?}';
     protected $description = 'Генерация пулла id сделок для восстановления истории статусов';
 
     public function handle()
     {
+        $allowRewrite = $this->option('allowRewriteExists');
         $startTimestamp = $this->option('timestamp');
         if(!$startTimestamp){
             $this->error('Не передано начало сбора id timestamp');
@@ -42,6 +43,7 @@ class AmoGenerateIdsToSyncCommand extends Command
             
             // Если API вернул пустой массив (дошли до конца всех сделок)
             if (empty($leadsChunk)) {
+                $this->error("пустой ответ от amo");
                 break; 
             }
 
@@ -60,12 +62,16 @@ class AmoGenerateIdsToSyncCommand extends Command
                 ];
             }
 
-            // Сохраняем или обновляем собранный кусок
-            if (!empty($insertData)) {
+            if($allowRewrite){
+                // Сохраняем или обновляем собранный кусок
                 DB::table('amo_backfill_ids')->upsert(
                     $insertData, 
                     ['amo_lead_id'], 
                     ['is_processed']
+                );
+            }else{
+                DB::table('amo_backfill_ids')->insertOrIgnore(
+                    $insertData
                 );
             }
 

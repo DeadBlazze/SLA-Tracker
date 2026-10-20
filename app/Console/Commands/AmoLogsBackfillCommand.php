@@ -27,6 +27,8 @@ class AmoLogsBackfillCommand extends Command
         $successCount = 0;
         $failCount = 0;
         $failedIds = [];
+        $successIds = [];
+
         foreach ($leads as $index => $lead) {
             $leadId = (int) $lead->amo_lead_id;
 
@@ -34,6 +36,7 @@ class AmoLogsBackfillCommand extends Command
                 // Вызываем напрямую текущий Action
                 $restoreAction->execute($leadId);
                 $successCount++;
+                $successIds[] = $leadId;
             } catch (Throwable $e) {
                 $failCount++;
                 $failedIds[] = [
@@ -45,11 +48,27 @@ class AmoLogsBackfillCommand extends Command
             }
 
             $bar->advance();
+            
+            if ($sleepMs > 0 && $index < $count - 1) {
+                usleep($sleepMs * 1000);
+            }
         }
         $bar->finish();
         $this->newLine(2);
+        
+        // МАССОВОЕ ОБНОВЛЕНИЕ processed В БД
+        if (!empty($successIds)) {
+            // Разбиваем на порции по 1000 штук (безопасно для MySQL/PostgreSQL)
+            foreach (array_chunk($successIds, 1000) as $chunk) {
+                DB::table('amo_backfill_ids')
+                    ->whereIn('amo_lead_id', $chunk)
+                    ->update(['is_processed' => true]);
+            }
+            $this->info("Флаг is_processed успешно обновлен для {$successCount} записей.");
+        }
 
         $this->info("Обработка завершена. Успешно: {$successCount}, Ошибок: {$failCount}.");
+
         // Сохраняем сбойные ID в отдельный файл для повторного прогона
         if (!empty($failedIds)) {
             $failLogPath = storage_path('failed_backfill_ids.json');
