@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class getManagersActivityRequest extends FormRequest
 {
@@ -16,6 +17,7 @@ class getManagersActivityRequest extends FormRequest
         return [
             'timestampFrom' => ['required', 'integer', 'min:0'],
             'timestampTo'   => ['required', 'integer', 'min:0', 'gte:timestampFrom'],
+            'groupBy' => ['required', 'in:status,leadId']
         ];
     }
 }

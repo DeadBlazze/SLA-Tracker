@@ -16,7 +16,7 @@ class getActivityAction{
     public function execute($data){
         $timestampFrom = Carbon::createFromTimestamp($data['timestampFrom'])->toDateTimeString();
         $timestampTo = Carbon::createFromTimestamp($data['timestampTo'])->toDateTimeString();
-        
+        $groupBy = $data['groupBy'];
         $rawLogs = $this->leadLogs->getManagerActivity(self::USERS, $timestampFrom, $timestampTo)->toArray();
         
         $logsGrouped = [];
@@ -25,14 +25,17 @@ class getActivityAction{
             // 1. Определяем менеджера
             $userId = $log['user_id'];
             $managerLabel = self::USERS_LABELS[$userId] ?? "Менеджер ID {$userId}";
-            
             // 2. Определяем статус
             $pipelineId = $log['pipeline_id'];
             $statusId = $log['status_id'];
             $statusLabel = self::STATUSES_LABELS[$pipelineId][$statusId] ?? "Статус ID {$statusId}";
             
-            // 3. Сразу собираем финальную структуру
-            $logsGrouped[$managerLabel][$statusLabel][] = $log;
+            if($groupBy === 'default'){
+                // 3. Сразу собираем финальную структуру
+                $logsGrouped[$managerLabel][$statusLabel][] = $log;
+            }else if($groupBy === 'leadId'){
+                $logsGrouped[$managerLabel][$log['amo_lead_id']][$statusLabel][] = $log;
+            }
         }
         
         return $logsGrouped;
