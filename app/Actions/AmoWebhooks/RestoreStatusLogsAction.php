@@ -82,7 +82,6 @@ class RestoreStatusLogsAction{
         $currentPipelineIndex = array_search($currentPipelineId, self::PIPELINES_ORDER, true);
         if ($currentPipelineIndex === false) {
             $this->leads->update($dbLeadData);
-            error_log(123);
             return;
         }
         
