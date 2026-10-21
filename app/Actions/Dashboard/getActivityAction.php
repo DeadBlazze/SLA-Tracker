@@ -30,7 +30,7 @@ class getActivityAction{
             $statusId = $log['status_id'];
             $statusLabel = self::STATUSES_LABELS[$pipelineId][$statusId] ?? "Статус ID {$statusId}";
             
-            if($groupBy === 'default'){
+            if($groupBy === 'status'){
                 // 3. Сразу собираем финальную структуру
                 $logsGrouped[$managerLabel][$statusLabel][] = $log;
             }else if($groupBy === 'leadId'){
