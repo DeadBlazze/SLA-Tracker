@@ -20,7 +20,6 @@
         "fakerphp/faker": "^1.24",
         "kitloong/laravel-migrations-generator": "^7.4",
         "larastan/larastan": "^3.9",
-        "laravel/boost": "^2.2",
         "laravel/pail": "^1.2.5",
         "laravel/pao": "^1.0.6",
         "laravel/pint": "^1.27",
