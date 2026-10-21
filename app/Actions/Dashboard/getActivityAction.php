@@ -34,7 +34,7 @@ class getActivityAction{
                 // 3. Сразу собираем финальную структуру
                 $logsGrouped[$managerLabel][$statusLabel][] = $log;
             }else if($groupBy === 'leadId'){
-                $logsGrouped[$managerLabel][$log['amo_lead_id']][$statusLabel][] = $log;
+                $logsGrouped[$managerLabel][$log['amo_lead_id']][] = ["label" => $statusLabel, ...$log];
             }
         }
         

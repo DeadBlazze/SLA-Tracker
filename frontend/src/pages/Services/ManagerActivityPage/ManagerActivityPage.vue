@@ -4,10 +4,10 @@
         h1 Сводка по менеджерам
         
         .manager-activity__sections
-            section.time-select
-                h2.time-select__title Период отчета
-                p.time-select__desc Выберите даты для загрузки логов из базы
-                .time-select__content
+            section.filter
+                h2.filter__title Период отчета
+                p.filter__desc Выберите даты для загрузки логов из базы
+                .filter__content
                     .date-filter
                         .date-filter__inputs
                             .date-filter__group
@@ -26,18 +26,21 @@
                                     v-model="dateTo"
                                     class="ui-input"
                                 )
+                    .group-filter
+                        p Группировать по:
+                        button(@click="changeGroupby('status')" :class="{'active': groupBy === 'status'}") статусам
+                        button(@click="changeGroupby('leadId')" :class="{'active': groupBy === 'leadId'}") ID сделок
+                    button.button--primary(
+                        @click="fetchActivity" 
+                        :disabled="!isDatesValid"
+                    ) Загрузить
                         
-                        button.button--primary(
-                            @click="fetchActivity" 
-                            :disabled="!isDatesValid"
-                        ) Загрузить
-                        
-                        span.error(v-if="!isDatesValid") ошибка
+                    span.error(v-if="!isDatesValid") ошибка
             // Блок для вывода ответа
-            section.stats(v-if="activityData")
+            section.stats(v-if="activityData && loadStatus === false")
                 h2.stats__title Результаты
                 .stats__content
-                    .manager-card(v-for="(statuses, managerName) in activityData" :key="managerName")
+                    .manager-card.byStatus(v-if="groupBy === 'status'" v-for="(statuses, managerName) in activityData" :key="managerName")
                         h3.manager-card__name {{ managerName }}
                         
                         .manager-card__statuses
@@ -51,6 +54,19 @@
                                         a(:href="`https://tkdvina.amocrm.ru/leads/detail/${lead.amo_lead_id}`" target="_blank")
                                             span.lead-item__id ID: {{ lead.amo_lead_id }}
                                         span.lead-item__time {{ new Date(lead.entered_at).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }) }}
+                    .manager-card.byLead(v-if="groupBy === 'leadId'" v-for="(leadIds, managerName) in activityData" :key="managerName")
+                        h3.manager-card__name {{ managerName }}
+
+                        .manager-card__leads
+                            .manager-card_lead(v-for="(statuses, leadId) in leadIds" :key="leadId")
+                                .lead__header
+                                    span.title ID: {{leadId}}
+                                ul.lead__statuses
+                                    li.status(v-for="(statusData, index) in statuses" :key="statusData.amo_lead_id + statusData.status_id" :class="{'last' : index === statuses.length - 1}")
+                                        a(:href="`https://tkdvina.amocrm.ru/leads/detail/${statusData.amo_lead_id}`" target="_blank")
+                                            span.lead-item__id {{ statusData.label }}
+                                        span.lead-item__time {{ new Date(statusData.entered_at).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }) }}
+            h3(v-if="loadStatus === 'start'") Загрузка
 
 </template>
 
@@ -64,7 +80,9 @@ export default {
             userStore: useUserStore(),
             dateFrom: '', // Формат YYYY-MM-DD
             dateTo: '',   // Формат YYYY-MM-DD
+            groupBy: 'status',
             activityData: null, // Сюда сохраним ответ от сервера
+            loadStatus: false
         }
     },
     computed: {
@@ -81,7 +99,7 @@ export default {
     methods: {
         async fetchActivity() {
             if (!this.isDatesValid) return;
-
+            this.loadStatus = 'start';
             // Формируем timestamp для начала дня (00:00:00)
             const fromDate = new Date(`${this.dateFrom}T00:00:00`);
             const timestampFrom = Math.floor(fromDate.getTime() / 1000);
@@ -92,7 +110,8 @@ export default {
             
             let payload = {
                 timestampFrom: timestampFrom,
-                timestampTo: timestampTo
+                timestampTo: timestampTo,
+                groupBy: this.groupBy
             }
             try {
                 let result = await api.post('/dashboard/get-managers-activity', payload, {
@@ -106,7 +125,13 @@ export default {
                 
             } catch (error) {
                 console.error('Ошибка при загрузке активности:', error);
+            }finally{
+                this.loadStatus = false
             }
+        },
+        changeGroupby(entity){
+            this.groupBy = entity
+            this.activityData = null
         }
     },
     mounted() {
