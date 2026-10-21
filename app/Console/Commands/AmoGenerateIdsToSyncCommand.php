@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 class AmoGenerateIdsToSyncCommand extends Command
 {
-    protected $signature = 'amo:genIdsToSync {--timestamp= : Начало сбора id timestamp --allowRewriteExists=false : Пускать в обновлении уже существующие id?}';
+    protected $signature = 'amo:genIdsToSync {--timestamp= : Начало сбора id timestamp} {--allowRewriteExists=false : Пускать в обновлении уже существующие id?}';
     protected $description = 'Генерация пулла id сделок для восстановления истории статусов';
 
     public function handle()
@@ -36,7 +36,9 @@ class AmoGenerateIdsToSyncCommand extends Command
             $response = $client->get("/api/v4/leads?page={$page}&limit=250&order[updated_at]=desc", [
                 'headers' => [
                     'Authorization' => "Bearer {$token}",
-                ]
+                ],
+                'timeout' => 30.0,         
+                'connect_timeout' => 10.0
             ]);
 
             $leadsChunk = json_decode((string) $response->getBody(), true)['_embedded']['leads'] ?? null;
@@ -83,5 +85,8 @@ class AmoGenerateIdsToSyncCommand extends Command
             $page++;
             usleep(300000); // 200мс пауза между страницами для API лимитов
         }
+
+        $this->newLine(1);
+        $this->info("Успешно");
     }
 }
