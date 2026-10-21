@@ -77,6 +77,15 @@ class RestoreStatusLogsAction{
             'created_at'          => $now->toDateTimeString()
         ];
 
+        
+        // Если воронки нет в цепочке пайплайнов — просто пишем в БД и выходим
+        $currentPipelineIndex = array_search($currentPipelineId, self::PIPELINES_ORDER, true);
+        if ($currentPipelineIndex === false) {
+            $this->leads->update($dbLeadData);
+            error_log(123);
+            return;
+        }
+        
         $response = $client->get("/api/v4/events?filter[entity]=leads&filter[entity_id]={$leadId}&filter[type]=lead_status_changed", [
             'headers' => [
             'Authorization' => "Bearer {$token}",

@@ -62,7 +62,14 @@ class UpdateStatusAction{
             'created_at'          => $now->toDateTimeString()
         ];
 
-
+        // Если воронки нет в цепочке пайплайнов — просто пишем в БД и выходим
+        $currentPipelineIndex = array_search($currentPipelineId, self::PIPELINES_ORDER, true);
+        if ($currentPipelineIndex === false) {
+            $this->leads->update($dbLeadData);
+            error_log(123);
+            return;
+        }
+        
         // Формируем custom fields
         $customFields = [];
         foreach($lead['custom_fields'] ?? [] as $field){
@@ -93,15 +100,6 @@ class UpdateStatusAction{
             $dbLeadData['promo_source_name'] = $promo_source['promo_source_name'];
             $dbLeadData['promo_source_enum_id'] = $promo_source['promo_source_enum_id'];
             $dbLeadData['source_phone'] = $this->leadSourceResolver->normalizePhoneNum($customFields[410463][0]['value'] ?? null);
-        }
-
-
-        // Если воронки или статуса нет в цепочке пайплайнов — просто пишем в БД и выходим
-        $currentPipelineIndex = array_search($currentPipelineId, self::PIPELINES_ORDER, true);
-        if ($currentPipelineIndex === false) {
-            $this->leads->update($dbLeadData);
-            error_log(123);
-            return;
         }
 
         
