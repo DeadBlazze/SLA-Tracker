@@ -18,7 +18,7 @@ class LeadStatusLogRepository{
         LeadStatusLog::upsert(
             $data,
             ['lead_pipeline_status_unique'],
-            ['id' => DB::raw('id')]
+            ['id']
         );
     }
     public function insertOrIgnore($data){
@@ -47,5 +47,19 @@ class LeadStatusLogRepository{
         
         $rows = DB::select($sql, $params);
         return $rows;
+    }
+    public function getLeftTime($amoLeadId, $pipelineId, $statusId){
+        return LeadStatusLog::where([
+            'amo_lead_id' => $amoLeadId,
+            'pipeline_id' => $pipelineId,
+            'status_id'   => $statusId,
+        ])->latest('entered_at')
+        ->value('left_at');
+    }
+    public function getPreviousDbId($amoLeadId){
+        return LeadStatusLog::where(['amo_lead_id' => $amoLeadId])->latest('id')->value('id');
+    }
+    public function closeLeftTimer($logId, $dateTimeString){
+        return LeadStatusLog::where(['id'=>$logId])->update(['left_at'=>$dateTimeString]);
     }
 }

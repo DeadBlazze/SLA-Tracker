@@ -6,7 +6,7 @@ use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
-use App\Actions\AmoWebhooks\RestoreStatusLogsAction;
+use App\Actions\AmoWebhooks\RestoreStatusLogsActionV2;
 use Throwable;
 use Illuminate\Support\Facades\DB;
 class AmoLogsBackfillCommand extends Command
@@ -14,7 +14,7 @@ class AmoLogsBackfillCommand extends Command
     // protected $signature = 'amo:backfill {--file=storage/app/private/leads.txt : Путь к файлу со сделками} {--sleep=300 : Задержка между сделками в миллисекундах} {--limit=} {--offset=0}';
     protected $description = 'Прямой синхронный бэкфилл сделок через RestoreStatusLogsAction без очередей';
     protected $signature = 'amo:backfill {--sleepMs=100}';
-    public function handle(RestoreStatusLogsAction $restoreAction)
+    public function handle(RestoreStatusLogsActionV2 $restoreAction)
     {   
         $sleepMs = (int) $this->option('sleepMs');
         $leads = DB::select("SELECT * FROM amo_backfill_ids WHERE is_processed = false");
@@ -49,9 +49,9 @@ class AmoLogsBackfillCommand extends Command
 
             $bar->advance();
             
-            if ($sleepMs > 0 && $index < $count - 1) {
-                usleep($sleepMs * 1000);
-            }
+            // if ($sleepMs > 0 && $index < $count - 1) {
+            //     usleep($sleepMs * 1000);
+            // }
         }
         $bar->finish();
         $this->newLine(2);

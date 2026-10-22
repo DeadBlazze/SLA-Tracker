@@ -43,17 +43,20 @@
                     .manager-card.byStatus(v-if="groupBy === 'status'" v-for="(statuses, managerName) in activityData" :key="managerName")
                         h3.manager-card__name {{ managerName }}
                         
+                        
                         .manager-card__statuses
                             .status-group(v-for="(leads, statusName) in statuses" :key="statusName")
-                                .status-group__header
+                                .status-group__header(@click="toggleVisiblity(`${managerName}_${statusName}`)")
                                     span.status-group__name {{ statusName }}
                                     span.status-group__badge {{ leads.length }}
                                 
-                                ul.status-group__list
-                                    li.lead-item(v-for="lead in leads" :key="lead.id")
-                                        a(:href="`https://tkdvina.amocrm.ru/leads/detail/${lead.amo_lead_id}`" target="_blank")
-                                            span.lead-item__id ID: {{ lead.amo_lead_id }}
-                                        span.lead-item__time {{ new Date(lead.entered_at).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }) }}
+                                
+                                transition(name="fade")
+                                    ul.status-group__list(v-if="statusesToShow[`${managerName}_${statusName}`]")
+                                        li.lead-item(v-for="lead in leads" :key="lead.id")
+                                            a(:href="`https://tkdvina.amocrm.ru/leads/detail/${lead.amo_lead_id}`" target="_blank")
+                                                span.lead-item__id ID: {{ lead.amo_lead_id }}
+                                            span.lead-item__time {{ new Date(lead.entered_at).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }) }}
                     .manager-card.byLead(v-if="groupBy === 'leadId'" v-for="(leadIds, managerName) in activityData" :key="managerName")
                         h3.manager-card__name {{ managerName }}
 
@@ -82,7 +85,8 @@ export default {
             dateTo: '',   // Формат YYYY-MM-DD
             groupBy: 'status',
             activityData: null, // Сюда сохраним ответ от сервера
-            loadStatus: false
+            loadStatus: false,
+            statusesToShow: []
         }
     },
     computed: {
@@ -132,6 +136,9 @@ export default {
         changeGroupby(entity){
             this.groupBy = entity
             this.activityData = null
+        },
+        toggleVisiblity(key){
+            this.statusesToShow[key] = !this.statusesToShow[key]
         }
     },
     mounted() {

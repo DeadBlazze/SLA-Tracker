@@ -15,7 +15,7 @@ class AmoGenerateIdsToSyncCommand extends Command
     protected $description = 'Генерация пулла id сделок для восстановления истории статусов';
 
     public function handle()
-    {
+    {   
         $allowRewrite = $this->option('allowRewriteExists');
         $startTimestamp = $this->option('timestamp');
         if(!$startTimestamp){
@@ -86,7 +86,9 @@ class AmoGenerateIdsToSyncCommand extends Command
             usleep(300000); // 200мс пауза между страницами для API лимитов
         }
 
+        $count = DB::select("SELECT COUNT(*) AS total FROM amo_backfill_ids WHERE is_processed = 0");
+        $count = $count[0]->total;
         $this->newLine(1);
-        $this->info("Успешно");
+        $this->info("Успешно {$count} строк");
     }
 }

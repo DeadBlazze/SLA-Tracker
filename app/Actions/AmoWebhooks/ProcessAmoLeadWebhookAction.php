@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Log;
 class ProcessAmoLeadWebhookAction {
 
     private const ACTION_MAP = [
-        'status' => UpdateStatusAction::class,
+        'status' => UpdateStatusActionV2::class,
         'add'    => AddLeadAction::class,
         'delete' => DeleteLeadAction::class,
     ];
