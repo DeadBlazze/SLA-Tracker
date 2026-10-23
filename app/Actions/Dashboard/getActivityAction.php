@@ -21,7 +21,7 @@ class getActivityAction{
         $groupBy = $data['groupBy'];
         $rawLogs = $this->leadLogs->getManagerActivity(self::USERS, $timestampFrom, $timestampTo)->toArray();
         if(empty($rawLogs)){
-            return [];
+            return ["status" => "error", "message" => "Нет данных за выбранный период"];
         }
         $logsGrouped = [];
         
@@ -68,7 +68,6 @@ class getActivityAction{
                     $logsGrouped[$managerLabel][$statusLabel] = $logs;
                 }
             }
-            return $logsGrouped;
         }else if($groupBy === 'leadId'){
             foreach($rawLogs as $log){
                 // 1. Определяем менеджера
@@ -82,6 +81,6 @@ class getActivityAction{
                 $logsGrouped[$managerLabel][$log['amo_lead_id']][] = ["label" => $statusLabel, ...$log];
             }
         }
-        return $logsGrouped;
+        return ["status" => "ok", "data" => $logsGrouped];
     }
 }

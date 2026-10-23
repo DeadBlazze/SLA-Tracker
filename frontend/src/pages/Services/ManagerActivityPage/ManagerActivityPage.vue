@@ -5,7 +5,7 @@
         
         .manager-activity__sections
             section.filter
-                h2.filter__title Период отчета
+                h2.filter__title(@click="console.log(activityData)") Период отчета
                 p.filter__desc Выберите даты для загрузки логов из базы
                 .filter__content
                     .date-filter
@@ -37,10 +37,10 @@
                         
                     span.error(v-if="!isDatesValid") ошибка
             // Блок для вывода ответа
-            section.stats(v-if="activityData && loadStatus === false")
+            section.stats(v-if="activityData?.status === 'ok' && loadStatus === false")
                 h2.stats__title Результаты
                 .stats__content
-                    .manager-card.byStatus(v-if="groupBy === 'status'" v-for="(statuses, managerName) in activityData" :key="managerName")
+                    .manager-card.byStatus(v-if="groupBy === 'status'" v-for="(statuses, managerName) in activityData.data" :key="managerName")
                         h3.manager-card__name {{ managerName }}
                         
                         
@@ -70,7 +70,7 @@
                                             span.lead-item__id {{ statusData.label }}
                                         span.lead-item__time {{ new Date(statusData.entered_at).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }) }}
             h3(v-if="loadStatus === 'start'") Загрузка
-
+            h3(v-if="loadStatus === false && activityData?.status === 'error'") {{activityData?.message}}
 </template>
 
 <script>
@@ -123,8 +123,7 @@ export default {
                         Authorization: `Bearer ${this.userStore.token}`
                     }
                 });
-                
-                this.activityData = result.data[0];
+                this.activityData = result.data;
                 console.log('Данные успешно загружены:', result);
                 
             } catch (error) {

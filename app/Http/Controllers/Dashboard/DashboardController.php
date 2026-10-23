@@ -8,6 +8,6 @@ use App\Actions\Dashboard\getActivityAction;
 use App\Http\Requests\getManagersActivityRequest;
 class DashboardController extends Controller {
     public function getManagersActivity(getActivityAction $action, getManagersActivityRequest $request){
-        return response()->json([$action->execute($request->validated())], 200);
+        return response()->json($action->execute($request->validated()), 200);
     }
 }
