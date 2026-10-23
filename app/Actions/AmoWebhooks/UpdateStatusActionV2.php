@@ -11,7 +11,7 @@ use GuzzleHttp\Exception\RequestException;
 use App\Services\amoCRM\ResolveLeadSourceService;
 use Illuminate\Support\Facades\DB;
 use App\Support\AmoPipelines;
-use App\Actions\AmoWebhooks\RestoreStatusLogsAction;
+use App\Actions\AmoWebhooks\RestoreStatusLogsActionV2;
 use App\Services\amoCRM\AmoFieldsAndStatusLogsFactory;
 use Illuminate\Support\Facades\File;
 class UpdateStatusActionV2{
@@ -19,7 +19,7 @@ class UpdateStatusActionV2{
         private LeadRepository $leads,
         private LeadStatusLogRepository $leadStatusLogs,
         private ResolveLeadSourceService $leadSourceResolver,
-        private RestoreStatusLogsAction $restoreStatusLogs,
+        private RestoreStatusLogsActionV2 $restoreStatusLogs,
         private AmoFieldsAndStatusLogsFactory $amoCustomFieldsAndLogs
     ) {}
 
