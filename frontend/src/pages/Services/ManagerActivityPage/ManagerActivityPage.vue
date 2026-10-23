@@ -43,7 +43,6 @@
                     .manager-card.byStatus(v-if="groupBy === 'status'" v-for="(statuses, managerName) in activityData.data" :key="managerName")
                         h3.manager-card__name {{ managerName }}
                         
-                        
                         .manager-card__statuses
                             .status-group(v-for="(leads, statusName) in statuses" :key="statusName")
                                 .status-group__header(@click="toggleVisiblity(`${managerName}_${statusName}`)")

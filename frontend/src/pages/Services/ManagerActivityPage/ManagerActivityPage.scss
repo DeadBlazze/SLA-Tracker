@@ -83,6 +83,7 @@
                         border-radius: 4px;
                         padding: 6px 12px;
                         font-size: 14px;
+                        color: var(--color-text);
                         &.active{
                             border-color: var(--color-accent-light);
                             box-shadow: 2px 4px 5px 0px var(--color-accent-light);
