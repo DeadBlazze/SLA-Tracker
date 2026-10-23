@@ -20,6 +20,7 @@
 import { api } from '@/api/api';
 import { toast } from 'vue3-toastify'
 import { useUserStore } from '@/stores/user';
+import axios from 'axios';
 export default {
     data(){
         return {
