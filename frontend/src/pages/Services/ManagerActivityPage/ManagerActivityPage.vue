@@ -5,7 +5,7 @@
         
         .manager-activity__sections
             section.filter
-                h2.filter__title(@click="console.log(activityData)") Период отчета
+                h2.filter__title Период отчета
                 p.filter__desc Выберите даты для загрузки логов из базы
                 .filter__content
                     .date-filter

@@ -10,11 +10,11 @@
             gap: 10px;
             border: 3px solid #5d7388;
             padding: 10px;
-            cursor: pointer;
             &__header{
                 display: flex;
                 gap: 10px;
                 .service__arrow{
+                    cursor: pointer;
                     color: var(--color-text);
                     height: 20px;
                     transform: rotate(90deg) translateY(-8px);
