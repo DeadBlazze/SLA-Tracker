@@ -1,6 +1,7 @@
 .wrapper{
     padding-top: 10px;
     .services{
+        margin-bottom: 300px;
         display: grid;
         gap: 30px;
         grid-template-columns: repeat(auto-fill, 300px);

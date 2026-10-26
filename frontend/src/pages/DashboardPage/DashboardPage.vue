@@ -7,18 +7,22 @@
                     h3.service__title Аналитика рекламы
                     ArrowTop.service__arrow(@click="")
                 p Сводный дашборд эффективности маркетинга с группировкой по рекламным источникам.
-
             .service
                 .service__header
-                    h3.service__title Зависшие лиды
+                    h3.service__title Аналитика звонков
                     ArrowTop.service__arrow
-                p Оперативный радар сделок, превысивших нормативное время пребывания на этапах воронки.
+                p Статистика звонков по рекламным номерам компании
             .service
                 .service__header
                     h3.service__title Активность менеджеров
                     router-link(:to="{name: 'dashboard.manager-activity'}") 
                         ArrowTop.service__arrow
                 p Инструмент оценки ежедневной производительности сотрудников отдела продаж.
+            .service
+                .service__header
+                    h3.service__title Зависшие лиды
+                    ArrowTop.service__arrow
+                p Оперативный радар сделок, превысивших нормативное время пребывания на этапах воронки.
             .service
                 .service__header
                     h3.service__title интеграция МегаФон АТС

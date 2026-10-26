@@ -1,6 +1,6 @@
 /* Добавляем стили секции сюда, чтобы не зависеть от SettingsPage.scss напрямую */
 .manager-activity{
-    margin-bottom: 100px;
+    margin-bottom: 300px;
     .manager-activity__sections {
         display: flex;
         flex-direction: column;
@@ -130,7 +130,8 @@
                         margin: 0 0 20px 0;
                         font-size: 20px;
                         color: var(--color-text);
-                        border-bottom: 2px solid #f0f0f0;
+                        border-bottom: 2px solid #adadad;
+                        // border-bottom: 2px solid #f0f0f0;
                         padding-bottom: 12px;
                     }
                 }
