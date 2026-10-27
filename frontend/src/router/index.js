@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+import { useUserStore } from "@/stores/user";
 import IndexPage from "@/pages/IndexPage/IndexPage.vue";
 import RegisterPage from "@/pages/RegisterPage/RegisterPage.vue";
 import LoginPage from "@/pages/LoginPage/LoginPage.vue";
@@ -6,7 +7,7 @@ import DashboardPage from "@/pages/DashboardPage/DashboardPage.vue";
 import ForbiddenPage from "@/pages/ForbiddenPage/ForbiddenPage.vue";
 import SettingsPage from "@/pages/SettingsPage/SettingsPage.vue";
 import ManagerActivityPage from "@/pages/Services/ManagerActivityPage/ManagerActivityPage.vue";
-import { useUserStore } from "@/stores/user";
+import CallsAnalyticPage from "@/pages/Services/CallsAnalyticPage/CallsAnalyticPage.vue";
 
 export const ROLES = {
   SUPER_ADMIN: 1,
@@ -37,6 +38,16 @@ const routes = [
           roles: [ROLES.SUPER_ADMIN, ROLES.MARKETER] ,
           requiresAuth: true,
           breadcrumb: "Активность менеджеров" 
+        }
+      },
+      {
+        path: 'calls-analytic',
+        name: 'dashboard.calls-analytic',
+        component: CallsAnalyticPage,
+        meta: {
+          roles: [ROLES.SUPER_ADMIN, ROLES.MARKETER],
+          requiresAuth: true,
+          breadcrumb: "Аналитика звонков"
         }
       }
     ]

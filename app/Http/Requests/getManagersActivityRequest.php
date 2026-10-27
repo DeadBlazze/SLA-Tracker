@@ -15,8 +15,8 @@ class getManagersActivityRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'timestampFrom' => ['required', 'integer', 'min:0'],
-            'timestampTo'   => ['required', 'integer', 'min:0', 'gte:timestampFrom'],
+            'datetimeFrom' => ['required', 'date'],
+            'datetimeTo'   => ['required', 'date', 'after_or_equal:datetimeFrom'],
             'groupBy' => ['required', 'in:status,leadId']
         ];
     }

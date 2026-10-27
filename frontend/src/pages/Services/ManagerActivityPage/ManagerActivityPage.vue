@@ -75,6 +75,7 @@
 <script>
 import { api } from '@/api/api';
 import { useUserStore } from '@/stores/user'
+import dayjs from 'dayjs';
 export default {
     name: 'ManagerActivityPage',
     data() {
@@ -103,17 +104,14 @@ export default {
         async fetchActivity() {
             if (!this.isDatesValid) return;
             this.loadStatus = 'start';
-            // Формируем timestamp для начала дня (00:00:00)
-            const fromDate = new Date(`${this.dateFrom}T00:00:00`);
-            const timestampFrom = Math.floor(fromDate.getTime() / 1000);
-
-            // Формируем timestamp для конца дня (23:59:59)
-            const toDate = new Date(`${this.dateTo}T23:59:59`);
-            const timestampTo = Math.floor(toDate.getTime() / 1000);
             
+            // Локальное начало/конец дня в unix timestamp
+            const datetimeFrom = dayjs(this.dateFrom).startOf('day').format('YYYY-MM-DDTHH:mm:ssZ');
+            const datetimeTo = dayjs(this.dateTo).endOf('day').format('YYYY-MM-DDTHH:mm:ssZ');
+
             let payload = {
-                timestampFrom: timestampFrom,
-                timestampTo: timestampTo,
+                datetimeFrom: datetimeFrom,
+                datetimeTo: datetimeTo,
                 groupBy: this.groupBy
             }
             try {
@@ -140,12 +138,9 @@ export default {
         }
     },
     mounted() {
-        // При загрузке страницы по умолчанию ставим текущий день
-        const today = new Date();
-        
-        // Корректируем timezone offset для правильного локального отображения даты
-        const todayStr = new Date(today.getTime() - (today.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
-        
+        // Локальное время
+        const todayStr = dayjs().format('YYYY-MM-DD');
+
         this.dateFrom = todayStr;
         this.dateTo = todayStr;
     }   

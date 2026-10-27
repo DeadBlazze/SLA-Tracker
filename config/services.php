@@ -39,7 +39,8 @@ return [
         'token'       => env('AMO_LONG_LIVED_TOKEN'),
     ],
     'megafon' => [
-        'crm_token' => env('MEGAFON_ACCESS_KEY')
+        'crm_token' => env('MEGAFON_ACCESS_KEY'),
+        'api_key' => env('MEGAFON_API_KEY')
     ],
     'calltracking_one'=>[
         'tk-dvina_token' => env('CALLTRACKING_ONE_TOKEN1'),

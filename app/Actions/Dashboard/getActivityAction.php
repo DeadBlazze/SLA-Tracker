@@ -16,10 +16,14 @@ class getActivityAction{
     // private const STATUSES_FOR_SORT = AmoPipelines::DATA['STATUSES_FOR_SORT'];
 
     public function execute($data){
-        $timestampFrom = Carbon::createFromTimestamp($data['timestampFrom'])->toDateTimeString();
-        $timestampTo = Carbon::createFromTimestamp($data['timestampTo'])->toDateTimeString();
+        $dateFromRaw = $data['datetimeFrom'];
+        $dateToRaw = $data['datetimeTo'];
+        
+        $fromDatetime= Carbon::parse($dateFromRaw)->utc()->toDateTimeString();
+        $toDatetime = Carbon::parse($dateToRaw)->utc()->toDateTimeString();
+        
         $groupBy = $data['groupBy'];
-        $rawLogs = $this->leadLogs->getManagerActivity(self::USERS, $timestampFrom, $timestampTo)->toArray();
+        $rawLogs = $this->leadLogs->getManagerActivity(self::USERS, $fromDatetime, $toDatetime)->toArray();
         if(empty($rawLogs)){
             return ["status" => "error", "message" => "Нет данных за выбранный период"];
         }

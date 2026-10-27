@@ -31,12 +31,12 @@ class LeadStatusLogRepository{
         ->orderBy('id', 'asc')
         ->get();
     }
-    public function getManagerActivityArchive($userIds, $timestampFrom, $timestampTo){
+    public function getManagerActivityArchive($userIds, $fromDatetime, $toDatetime){
         $sql = "SELECT * 
             FROM lead_status_logs 
             WHERE entered_at >= ?
             AND entered_at <= ?";
-        $params = [$timestampFrom, $timestampTo];
+        $params = [$fromDatetime, $toDatetime];
 
         $usersIdsPlaceholder = implode(',', array_fill(0, count($userIds), '?'));
         $sql.=" AND user_id IN ($usersIdsPlaceholder)
