@@ -97,8 +97,259 @@
                 }
             }
         }
-        .stats{
+        section.stats {
+            margin-top: 50px;
+            background: var(--color-bg2);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+            color: var(--color-text);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
 
+            .stats__empty,
+            .stats__loading {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                min-height: 250px;
+                color: var(--color-accent);
+                font-size: 14px;
+            }
+
+            .stats__header {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-between;
+                align-items: center;
+                gap: 16px;
+                border-bottom: 1px solid var(--color-bg);
+                padding-bottom: 16px;
+            }
+
+            .stats__summary {
+                display: flex;
+                gap: 16px;
+
+                .summary-card {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 4px;
+
+                    &__label {
+                        font-size: 12px;
+                        color: var(--color-accent);
+                    }
+
+                    &__value {
+                        font-size: 20px;
+                        font-weight: 700;
+
+                        &--success {
+                            color: #2e7d32; // читаемый зеленый
+                        }
+                        &--missed {
+                            color: #d32f2f; // читаемый красный
+                        }
+                    }
+                }
+            }
+
+            .stats__controls {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+
+                .controls__label {
+                    font-size: 13px;
+                    color: var(--color-accent);
+                }
+
+                .btn-group {
+                    display: flex;
+                    background: var(--color-bg);
+                    border-radius: 8px;
+                    padding: 2px;
+
+                    &__btn {
+                        background: transparent;
+                        border: none;
+                        color: var(--color-text);
+                        padding: 6px 12px;
+                        font-size: 12px;
+                        border-radius: 6px;
+                        cursor: pointer;
+                        transition: all 0.2s ease;
+
+                        &:hover {
+                            color: var(--color-accent-light);
+                        }
+
+                        &--active {
+                            background: var(--color-bg2);
+                            color: var(--color-accent-light);
+                            font-weight: 600;
+                            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+                        }
+                    }
+                }
+            }
+
+            // Обертка под скролл, если колонок много
+            .stats__chart-wrapper {
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+                position: relative;
+            }
+            // Плавающий независимый тултип
+            .chart-tooltip {
+                position: absolute;
+                transform: translate(-50%, -100%); // Центровка и подъем над точкой
+                background: var(--color-text);
+                color: var(--color-bg);
+                padding: 6px 10px;
+                border-radius: 6px;
+                font-size: 11px;
+                white-space: nowrap;
+                pointer-events: none; // Курсор не цепляется за тултип
+                z-index: 50;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+                transition: top 0.1s ease, left 0.1s ease;
+
+                &::after {
+                    content: '';
+                    position: absolute;
+                    top: 100%;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    border-width: 4px;
+                    border-style: solid;
+                    border-color: var(--color-text) transparent transparent transparent;
+                }
+
+                small {
+                    font-size: 10px;
+                    opacity: 0.8;
+                }
+            }
+            .stats__chart {
+                display: flex;
+                align-items: flex-end;
+                gap: 16px;
+                height: 220px;
+                padding-top: 10px;
+                overflow-x: auto;
+                overflow-y: hidden;
+                border-bottom: 1px solid var(--color-bg);
+
+                // Тонкий скроллбар
+                &::-webkit-scrollbar {
+                    height: 4px;
+                }
+                &::-webkit-scrollbar-thumb {
+                    background: var(--color-accent);
+                    border-radius: 4px;
+                }
+
+                .chart-column {
+                    flex: 1;
+                    min-width: 38px;
+                    max-width: 60px;
+                    height: 100%;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: flex-end;
+                    position: relative;
+                    
+                    &:hover {
+                        .chart-column__tooltip {
+                            opacity: 1;
+                            visibility: visible;
+                            transform: translateX(-50%) translateY(-6px);
+                        }
+                    }
+                    &__total {
+                        font-size: 11px;
+                        font-weight: 600;
+                        color: var(--color-text);
+                        margin-bottom: 6px;
+                        line-height: 1;
+                        transition: color 0.2s ease, transform 0.2s ease;
+                        user-select: none;
+                    }
+                    &__bar-wrapper {
+                        width: 100%;
+                        height: 100%;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: flex-end;
+                        position: relative;
+                    }
+
+                    &__bar {
+                        width: 100%;
+                        height: 100%;
+                        display: flex;
+                        flex-direction: column-reverse; /* success снизу, missed сверху */
+                        background: var(--color-bg);
+                        border-radius: 6px 6px 0 0;
+                        overflow: hidden;
+                    }
+
+                    &__segment {
+                        width: 100%;
+                        transition: height 0.3s ease;
+
+                        &--success {
+                            background: var(--color-accent-light);
+                        }
+                        &--missed {
+                            background: #e57373;
+                        }
+                    }
+
+                    &__label {
+                        font-size: 11px;
+                        color: var(--color-accent);
+                        margin-top: 8px;
+                        white-space: nowrap;
+                    }
+                }
+            }
+
+            .stats__legend {
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                font-size: 12px;
+                color: var(--color-accent);
+
+                .legend-item {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+
+                    &__color {
+                        width: 10px;
+                        height: 10px;
+                        border-radius: 2px;
+
+                        &--success {
+                            background: var(--color-accent-light);
+                        }
+                        &--missed {
+                            background: #e57373;
+                        }
+                    }
+                }
+            }
         }
     }
 }

@@ -33,7 +33,11 @@ class getCallsAnalyticAction {
             ]);
             $json = (string) $response->getBody();
             $calls = json_decode((string) $json, 1);
-            $history[$phone] = $calls;
+            if (is_array($calls)) {
+                $history[$phone] = $calls;
+            }else{
+                $history[$phone] = [];
+            }
         }
         return $history;
         error_log(123);
