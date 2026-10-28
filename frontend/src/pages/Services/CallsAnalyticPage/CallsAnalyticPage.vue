@@ -41,7 +41,7 @@
                                 span.chip__badge {{ phone.source }}
                     button.button--primary(
                         @click="fetchCallAnalytic" 
-                        :disabled="!isDatesValid"
+                        :disabled="!isDatesValid || !isPhoneChoosen"
                     ) Загрузить
             section.stats
                 .stats__empty(v-if="!history && !loadStatus")
@@ -162,6 +162,10 @@ export default {
             }
             return false
         },
+        isPhoneChoosen(){
+            if(this.selectedPhones.length === 0) return false
+            else return true
+        },
         allCalls() {
             if (!this.history || typeof this.history !== 'object') return [];
             return Object.values(this.history).flat();
@@ -227,7 +231,9 @@ export default {
     },
     methods: {
         async fetchCallAnalytic(){
+            this.history = null;
             if (!this.isDatesValid) return;
+            if(!this.isPhoneChoosen) return;
             this.loadStatus = true;
 
             const datetimeFrom = dayjs(this.dateFrom).startOf('day').format('YYYY-MM-DDTHH:mm:ssZ');
