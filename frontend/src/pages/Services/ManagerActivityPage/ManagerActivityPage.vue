@@ -48,14 +48,14 @@
                                 .status-group__header(@click="toggleVisiblity(`${managerName}_${statusName}`)")
                                     span.status-group__name {{ statusName }}
                                     span.status-group__badge {{ leads.length }}
-                                
-                                
                                 transition(name="fade")
                                     ul.status-group__list(v-if="statusesToShow[`${managerName}_${statusName}`]")
                                         li.lead-item(v-for="lead in leads" :key="lead.id")
                                             a(:href="`https://tkdvina.amocrm.ru/leads/detail/${lead.amo_lead_id}`" target="_blank")
                                                 span.lead-item__id ID: {{ lead.amo_lead_id }}
                                             span.lead-item__time {{ new Date(lead.entered_at + 'Z').toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Moscow' }) }}
+                        .manager-card__sum(v-if="activityData.sumBy73143102?.[managerName]")
+                            span Сумма закончили реализацию: {{activityData.sumBy73143102[managerName]}}
                     .manager-card.byLead(v-if="groupBy === 'leadId'" v-for="(leadIds, managerName) in activityData.data" :key="managerName")
                         h3.manager-card__name {{ managerName }}
 

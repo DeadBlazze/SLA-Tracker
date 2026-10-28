@@ -5,6 +5,10 @@ use App\Repositories\LeadStatusLogRepository;
 use App\Support\AmoUsers;
 use App\Support\AmoPipelines;
 use Carbon\Carbon;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
+use Illuminate\Support\Facades\DB;
+
 class getActivityAction{
     public function __construct(
         public LeadRepository $leads,
@@ -54,6 +58,7 @@ class getActivityAction{
 
             // 3. Сортируем данные и формируем итоговый массив $logsGrouped
             $logsGrouped = [];
+            $leadIdsByStatus73143102 =[]; // Сумма по 2 Закончили реализацию
             foreach ($tempArray as $managerLabel => $statusesData) {
                 
                 // Сортируем статусы текущего менеджера по созданной карте
@@ -66,12 +71,30 @@ class getActivityAction{
 
                 // Переписываем ключи из "9088966.142" в понятные названия из словаря
                 foreach ($statusesData as $compositeKey => $logs) {
+                    if($compositeKey === "9089018.73143102"){
+                        foreach($logs as $log){
+                            $leadIdsByStatus73143102[$managerLabel][$log['amo_lead_id']] = true; 
+                        }
+                    }
                     [$pipelineId, $statusId] = explode(".", $compositeKey);
                     $statusLabel = self::STATUSES_LABELS[$pipelineId][$statusId] ?? "Статус ID {$statusId}";
                     
                     $logsGrouped[$managerLabel][$statusLabel] = $logs;
                 }
             }
+
+            // Собираем id сделок закончили реализацию
+            $sumBy73143102 = [];
+            foreach ($leadIdsByStatus73143102 as $managerLabel => $managerIds) {
+                $ids = array_keys($managerIds);
+
+                $idsPlaceholder = implode(',', array_fill(0, count($ids), '?'));
+                $sql = "SELECT SUM(net_profit) AS profit FROM leads WHERE amo_lead_id IN ($idsPlaceholder)";
+                
+                $sum = DB::select($sql, $ids);
+                $sumBy73143102[$managerLabel] = round((float) ($sum[0]->profit ?? 0), 2);
+            }
+            error_log(123);
         }else if($groupBy === 'leadId'){
             foreach($rawLogs as $log){
                 // 1. Определяем менеджера
@@ -85,6 +108,6 @@ class getActivityAction{
                 $logsGrouped[$managerLabel][$log['amo_lead_id']][] = ["label" => $statusLabel, ...$log];
             }
         }
-        return ["status" => "ok", "data" => $logsGrouped];
+        return ["status" => "ok", "data" => $logsGrouped, "sumBy73143102" => $sumBy73143102];
     }
 }

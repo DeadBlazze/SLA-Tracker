@@ -192,6 +192,16 @@
                                     }
                                 }
                             }
+
+                        }
+                    }
+                    .manager-card__sum{
+                        margin-top: 15px;
+                        span{
+                            font-family: 'Ubuntu';
+                            font-weight: 400;
+                            color: var(--color-text);
+                            font-size: 14px;
                         }
                     }
                 }
