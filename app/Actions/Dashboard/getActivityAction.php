@@ -86,12 +86,20 @@ class getActivityAction{
             // Собираем сумму net_profit
             $netProfitSum = [];
             foreach ($leadIdsWithProfit as $managerLabel => $managerIds) {
+                $user_id = null;
+                foreach(self::USERS_LABELS as $id => $label){
+                    if($label === $managerLabel) {
+                        $user_id = $id;
+                        break;
+                    }
+                }
+                if(!$user_id) continue;
                 $ids = array_keys($managerIds);
 
                 $idsPlaceholder = implode(',', array_fill(0, count($ids), '?'));
-                $sql = "SELECT SUM(net_profit) AS profit FROM leads WHERE amo_lead_id IN ($idsPlaceholder)";
+                $sql = "SELECT SUM(net_profit) AS profit FROM leads WHERE amo_lead_id IN ($idsPlaceholder) AND responsible_user_id = ?";
                 
-                $sum = DB::select($sql, $ids);
+                $sum = DB::select($sql, [...$ids, $user_id]);
                 $netProfitSum[$managerLabel] = round((float) ($sum[0]->profit ?? 0), 2);
             }
         }else if($groupBy === 'leadId'){
