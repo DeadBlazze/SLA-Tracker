@@ -55,7 +55,7 @@
                                                 span.lead-item__id ID: {{ lead.amo_lead_id }}
                                             span.lead-item__time {{ new Date(lead.entered_at + 'Z').toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Moscow' }) }}
                         .manager-card__sum(v-if="activityData.netProfitSum?.[managerName]")
-                            span Сумма закончили реализацию: {{activityData.sumBy73143102[managerName]}}
+                            span Сумма закончили реализацию: {{activityData.netProfitSum[managerName]}}
                     .manager-card.byLead(v-if="groupBy === 'leadId'" v-for="(leadIds, managerName) in activityData.data" :key="managerName")
                         h3.manager-card__name {{ managerName }}
 
