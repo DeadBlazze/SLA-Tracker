@@ -62,6 +62,7 @@ class RestoreStatusLogsActionV2{
             "amo_lead_id" => $leadData['id'],
             "pipeline_id" => $leadData['pipeline_id'],
             "status_id" => $leadData['status_id'],
+            'responsible_user_id' => $leadData['responsible_user_id'],
             "net_profit" => 0,
             "amo_source_name" => $leadData['_embedded']['source']['name'] ?? null,
             "amo_source_id" => $leadData['_embedded']['source']['id'] ?? null,
@@ -74,7 +75,7 @@ class RestoreStatusLogsActionV2{
             'responsible_user_id' => $leadData['responsible_user_id'] ?? null,
             'created_at'          => $now->toDateTimeString()
         ];
-
+        if(!$logsCap['responsible_user_id']) Log::warning("missed responsible : {$leadData}");
         
         // Формируем custom fields
         $customFields = [];

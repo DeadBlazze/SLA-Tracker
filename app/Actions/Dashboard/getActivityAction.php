@@ -86,14 +86,9 @@ class getActivityAction{
             // Собираем сумму net_profit
             $netProfitSum = [];
             foreach ($leadIdsWithProfit as $managerLabel => $managerIds) {
-                $user_id = null;
-                foreach(self::USERS_LABELS as $id => $label){
-                    if($label === $managerLabel) {
-                        $user_id = $id;
-                        break;
-                    }
-                }
+                $user_id = array_search($managerLabel, self::USERS_LABELS);
                 if(!$user_id) continue;
+                
                 $ids = array_keys($managerIds);
 
                 $idsPlaceholder = implode(',', array_fill(0, count($ids), '?'));

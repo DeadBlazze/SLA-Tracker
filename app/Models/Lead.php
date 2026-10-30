@@ -14,6 +14,7 @@ class Lead extends Model
         'status_id',
         'old_status_id',
         'source_phone',
+        'responsible_user_id',
         'promo_source_name',
         'promo_source_enum_id',
         'amo_source_id',

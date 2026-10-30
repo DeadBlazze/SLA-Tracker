@@ -34,7 +34,7 @@ class UpdateStatusActionV2{
         // Лог запросов updateLead
         $datetime = now()->toDateTimeString();
         $logLeadData = json_encode($lead, JSON_UNESCAPED_UNICODE);
-        $logLine = "[$datetime] $logLeadData" . PHP_EOL;
+        $logLine = "[$datetime] $logLeadData responsible : {$lead['responsible_user_id']}" . PHP_EOL;
         $path = storage_path('logs/UpdateAmoRequests.log');
         File::append($path, $logLine);
 
