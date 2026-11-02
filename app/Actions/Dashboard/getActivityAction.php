@@ -59,7 +59,6 @@ class getActivityAction{
 
             // 3. Сортируем данные и формируем итоговый массив $logsGrouped
             $logsGrouped = [];
-            $leadIdsWithProfit =[];
             foreach ($tempArray as $managerLabel => $statusesData) {
                 
                 // Сортируем статусы текущего менеджера по созданной карте
@@ -72,11 +71,6 @@ class getActivityAction{
 
                 // Переписываем ключи из "9088966.142" в понятные названия из словаря
                 foreach ($statusesData as $compositeKey => $logs) {
-                    if($compositeKey === "9089018.73143098"){
-                        foreach($logs as $log){
-                            $leadIdsWithProfit[$managerLabel][$log['amo_lead_id']] = true; 
-                        }
-                    }
                     [$pipelineId, $statusId] = explode(".", $compositeKey);
                     $statusLabel = self::STATUSES_LABELS[$pipelineId][$statusId] ?? "Статус ID {$statusId}";
                     
@@ -86,20 +80,22 @@ class getActivityAction{
 
             // Собираем сумму net_profit
             $netProfitSum = [];
-            foreach ($leadIdsWithProfit as $managerLabel => $managerIds) {
-                $user_id = array_search($managerLabel, self::USERS_LABELS);
-                if(!$user_id) {
-                    Log::warning("User id not found");
-                    continue;
-                }
-                
-                $ids = array_keys($managerIds);
+            $managerIds = array_keys(self::USERS_LABELS);
+            $idsPlaceholder = implode(',', array_fill(0, count($managerIds), '?'));
+            
+            $sql = "SELECT responsible_user_id, SUM(net_profit) AS net_profit FROM leads
+            WHERE responsible_user_id IN ({$idsPlaceholder})
+            AND pipeline_id = 9089018 AND status_id IN (73143098, 73143102, 142)
+            AND cargo_loaded_at > ? AND cargo_loaded_at < ?
+            GROUP BY responsible_user_id;";
 
-                $idsPlaceholder = implode(',', array_fill(0, count($ids), '?'));
-                $sql = "SELECT SUM(net_profit) AS profit FROM leads WHERE amo_lead_id IN ($idsPlaceholder) AND responsible_user_id = ?";
-                
-                $sum = DB::select($sql, [...$ids, $user_id]);
-                $netProfitSum[$managerLabel] = round((float) ($sum[0]->profit ?? 0), 2);
+            $params = [...$managerIds, $fromDatetime, $toDatetime];
+
+            $rawProfit = DB::select($sql, $params);
+
+            foreach($rawProfit as $sumStr){
+                $managerLabel = self::USERS_LABELS[$sumStr->responsible_user_id] ?? "ID: {$sumStr->responsible_user_id}";
+                $netProfitSum[$managerLabel] = round((float) $sumStr->net_profit, 2);
             }
         }else if($groupBy === 'leadId'){
             foreach($rawLogs as $log){
