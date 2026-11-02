@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class getActivityAction{
     public function __construct(
@@ -71,7 +72,7 @@ class getActivityAction{
 
                 // Переписываем ключи из "9088966.142" в понятные названия из словаря
                 foreach ($statusesData as $compositeKey => $logs) {
-                    if($compositeKey === "9089018.73143098" || $compositeKey === "9089018.73143102" || $compositeKey === "9089018.142"){
+                    if($compositeKey === "9089018.73143098"){
                         foreach($logs as $log){
                             $leadIdsWithProfit[$managerLabel][$log['amo_lead_id']] = true; 
                         }
@@ -87,7 +88,10 @@ class getActivityAction{
             $netProfitSum = [];
             foreach ($leadIdsWithProfit as $managerLabel => $managerIds) {
                 $user_id = array_search($managerLabel, self::USERS_LABELS);
-                if(!$user_id) continue;
+                if(!$user_id) {
+                    Log::warning("User id not found");
+                    continue;
+                }
                 
                 $ids = array_keys($managerIds);
 
