@@ -70,7 +70,8 @@ class UpdateStatusActionV2{
             ];
         }
         $dbLeadData['net_profit'] = $customFields[685511][0]['value'] ?? 0;
-        $dbLeadData['cargo_loaded_at'] = Carbon::createFromTimestamp($customFields[726049][0]['value'])->toIso8601String() ?? null;
+        $loaded_at = $customFields[726049][0]['value'] ?? null;
+        if($loaded_at) $dbLeadData['cargo_loaded_at'] =  Carbon::createFromTimestamp($loaded_at);
 
         $promo_source = [
             "promo_source_name" => $customFields[729721][0]['value'] ?? null,

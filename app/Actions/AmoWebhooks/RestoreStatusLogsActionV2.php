@@ -83,7 +83,9 @@ class RestoreStatusLogsActionV2{
             $customFields[$field['field_id']] = $field['values'][0] ?? null;
         }
         $dbLeadData['net_profit'] = $customFields[685511]['value'] ?? 0;
-        $dbLeadData['cargo_loaded_at'] = Carbon::createFromTimestamp($customFields[726049]['value'])->toIso8601String() ?? null;
+        $loaded_at = $customFields[726049]['value'] ?? null;
+        if($loaded_at) $dbLeadData['cargo_loaded_at'] =  Carbon::createFromTimestamp($loaded_at);
+        
         // Заполняем $dbLeadData и $amoFieldsToInsert
         $promo_source = [
             "promo_source_name" => $customFields[729721]['value'] ?? null,
