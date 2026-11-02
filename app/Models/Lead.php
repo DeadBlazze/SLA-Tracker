@@ -20,7 +20,8 @@ class Lead extends Model
         'amo_source_id',
         'amo_source_name',
         'net_profit',
-        'created_at'
+        'created_at',
+        'cargo_loaded_at'
     ];
     protected $primaryKey = 'id';
     public $incrementing = true;
