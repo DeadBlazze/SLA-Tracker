@@ -37,7 +37,7 @@ class UpdateLeadAction {
             'old_status_id'       => $lead['old_status_id'] ?? null,
             'responsible_user_id' => $lead['responsible_user_id'] ?? null,
             'pipeline_id'         => $lead['pipeline_id'],
-            'net_profit'          => $customFields[685511] ?? 0,
+            'net_profit'          => $customFields[685511]['value'] ?? 0,
             'cargo_loaded_at'     => $loadedAt ? Carbon::createFromTimestamp($loadedAt)->toDateTimeString() : null,
         ]);
 
