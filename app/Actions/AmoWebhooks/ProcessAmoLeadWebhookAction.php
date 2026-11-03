@@ -9,6 +9,7 @@ class ProcessAmoLeadWebhookAction {
         'status' => UpdateStatusActionV2::class,
         'add'    => AddLeadAction::class,
         'delete' => DeleteLeadAction::class,
+        'update' => UpdateLeadAction::class
     ];
 
     public function handle(array $payload): void
