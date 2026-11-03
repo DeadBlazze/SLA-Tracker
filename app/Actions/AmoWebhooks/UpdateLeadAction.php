@@ -16,35 +16,34 @@ class UpdateLeadAction {
         $leadId = !empty($lead['id']) ? (int) $lead['id'] : null;
         if(!$leadId) return Log::warning('AmoWebhook: Lead payload without valid ID', ['payload' => $lead]);
 
-        $dbLeadData = [
-            "amo_lead_id" => $lead['id'],
-            "status_id" => $lead['status_id'],
-            "old_status_id" => $lead['old_status_id'] ?? null,
-            'responsible_user_id' => $lead['responsible_user_id'] ?? null,
-            'pipeline_id'         => $lead['pipeline_id']
-        ];
+        $leadModel = Lead::where('amo_lead_id', $leadId)->first();
+
+        // Если сделки физически нет в базе — восстанавливаем логи / создаем
+        if (!$leadModel) {
+            $this->restoreStatusLogs->execute($leadId);
+            return;
+        }
 
         // Формируем custom fields
         $customFields = [];
         foreach($lead['custom_fields'] ?? [] as $field){
-            $customFields[$field['id']] = [
-                $field['values'][0] ?? null
-            ];
+            $customFields[$field['id']] = $field['values'][0] ?? null;
         }
 
-        $dbLeadData['net_profit'] = $customFields[685511][0]['value'] ?? 0;
-        $loaded_at = $customFields[726049][0]['value'] ?? null;
-        if($loaded_at) $dbLeadData['cargo_loaded_at'] =  Carbon::createFromTimestamp($loaded_at)->toDateTimeString();
+        $loadedAt = $customFields[726049]['value'] ?? null;
+        // Заполняем модель новыми данными
+        $leadModel->fill([
+            'status_id'           => $lead['status_id'],
+            'old_status_id'       => $lead['old_status_id'] ?? null,
+            'responsible_user_id' => $lead['responsible_user_id'] ?? null,
+            'pipeline_id'         => $lead['pipeline_id'],
+            'net_profit'          => $customFields[685511] ?? 0,
+            'cargo_loaded_at'     => $loadedAt ? Carbon::createFromTimestamp($loadedAt)->toDateTimeString() : null,
+        ]);
 
-        $affected = Lead::where('amo_lead_id', $leadId)->update($dbLeadData);
-
-        if ($affected === 0) {
-            $exists = Lead::where('amo_lead_id', $leadId)->exists();
-            
-            // Сделки действительно нет (не создавалась или была удалена)
-            if (!$exists) {
-                $this->restoreStatusLogs->execute($leadId);
-            }
+        // UPDATE выполнится только если хотя бы одно значение реально отличается от того, что в БД
+        if ($leadModel->isDirty()) {
+            $leadModel->save();
         }
     }
 }
