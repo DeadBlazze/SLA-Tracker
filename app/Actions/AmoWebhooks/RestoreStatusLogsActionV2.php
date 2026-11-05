@@ -192,6 +192,9 @@ class RestoreStatusLogsActionV2{
         ]);
         if($response->getStatusCode() === 200){
             // insertOrIgnore для предотвращения падения на duplicate entry lead_pipeline_status_unique
+            // DB::enableQueryLog();
+            // DB::disableQueryLog();
+            // Log::warning(DB::getQueryLog());
             DB::transaction(function () use ($dbLeadData, $dbLogsData) {
                 $result0 = $this->leads->upsert($dbLeadData);
                 $result = $this->leadStatusLogs->insertOrIgnore($dbLogsData);
