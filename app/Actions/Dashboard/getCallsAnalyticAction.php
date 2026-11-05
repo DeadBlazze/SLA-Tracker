@@ -6,10 +6,10 @@ use Illuminate\Support\Facades\Log;
 
 class getCallsAnalyticAction {
     private const ATS_USERS = [
-        "9210812077" => ["username" => "9210812077", "alias" => "2ГИС"],
-        "9210802077" => ["username" => "9210802077", "alias" => "ВК"],
-        "9212482866" => ["username" => "9212482866", "alias" => "ЯБизнес"],
-        "9532639075" => ["username" => "kazakova_oksana", "alias" => "ЯУслуги 2"]
+        "9210812077" => ["diversion" => "79210812077", "alias" => "2ГИС"],
+        "9210802077" => ["diversion" => "79210802077", "alias" => "ВК"],
+        "9212482866" => ["diversion" => "79212482866", "alias" => "ЯБизнес"],
+        "9532639075" => ["diversion" => "79532639075", "alias" => "ЯУслуги 2"]
     ];
     public function execute($data){
         $dateFromRaw = $data['datetimeFrom'];
