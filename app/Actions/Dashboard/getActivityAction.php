@@ -86,7 +86,7 @@ class getActivityAction{
             $sql = "SELECT responsible_user_id, SUM(net_profit) AS net_profit FROM leads
             WHERE responsible_user_id IN ({$idsPlaceholder})
             AND pipeline_id = 9089018 AND status_id IN (73143098, 73143102, 142)
-            AND cargo_loaded_at > ? AND cargo_loaded_at < ?
+            AND cargo_loaded > ? AND cargo_loaded < ?
             GROUP BY responsible_user_id;";
 
             $params = [...$managerIds, $fromDatetime, $toDatetime];
