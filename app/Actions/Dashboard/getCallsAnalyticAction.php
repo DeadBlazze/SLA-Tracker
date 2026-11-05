@@ -24,9 +24,9 @@ class getCallsAnalyticAction {
         ]);
         $history = [];
         foreach($phonesArray as $phone){
-            $username = self::ATS_USERS[$phone]["diversion"] ?? null;
-            if(!$username) return response()->json(['status' => 'error', 'message' => 'Невалидный номер телефона'], 400);
-            $response = $client->request('GET', "https://vats675508.megapbx.ru/crmapi/v1/history/json?user={$username}&type=in&start={$fromDatetime}&end={$toDatetime}&limit=500", [
+            $diversion = self::ATS_USERS[$phone]["diversion"] ?? null;
+            if(!$diversion) return response()->json(['status' => 'error', 'message' => 'Невалидный номер телефона'], 400);
+            $response = $client->request('GET', "https://vats675508.megapbx.ru/crmapi/v1/history/json?diversion={$diversion}&type=in&start={$fromDatetime}&end={$toDatetime}&limit=500", [
                 'headers' => [
                     "X-API-KEY" => $api_key
                 ]
