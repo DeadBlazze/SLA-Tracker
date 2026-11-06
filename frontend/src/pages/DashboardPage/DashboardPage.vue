@@ -2,7 +2,7 @@
 .DashboardPage
     .wrapper
         .services
-            .service
+            .service(style="background-color: rgba(255, 0, 0, 0.3)")
                 .service__header
                     h3.service__title Аналитика рекламы
                     ArrowTop.service__arrow
@@ -19,12 +19,12 @@
                     router-link(:to="{name:'dashboard.manager-activity'}") 
                         ArrowTop.service__arrow
                 p Инструмент оценки ежедневной производительности сотрудников отдела продаж.
-            .service
+            .service(style="background-color: rgba(255, 0, 0, 0.3)")
                 .service__header
                     h3.service__title Зависшие статусы
                     ArrowTop.service__arrow
                 p Оперативный радар сделок, превысивших нормативное время пребывания на этапах воронки.
-            .service
+            .service(style="background-color: rgba(255, 0, 0, 0.3)")
                 .service__header
                     h3.service__title интеграция МегаФон АТС
                     ArrowTop.service__arrow
