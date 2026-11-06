@@ -116,6 +116,37 @@
 
                 .stats__empty(v-else)
                     p За выбранный период звонков не найдено.
+        section.calls-history(v-if="history")
+            h2.calls-history__title История звонков
+
+            .calls-group(v-for="(group, phoneKey) in history" :key="phoneKey")
+                .calls-group__header
+                    span.calls-group__phone 8{{ phoneKey }}
+                    span.calls-group__badge Всего звонков: {{ group.length }}
+
+                .calls-list
+                    .call-item(
+                        v-for="call in group" 
+                        :key="call.uid"
+                        :class="`call-item--${call.status}`"
+                    )
+                        .call-item__col.call-item__col--main
+                            .call-item__client {{ call.client }}
+                            .call-item__meta
+                                span.call-item__time {{ call.start }}
+                                span.call-item__target(v-if="call.user_name || call.group_name") 
+                                    | → {{ call.user_name || call.group_name }}
+
+                        .call-item__col.call-item__col--stats
+                            span.call-item__status(
+                                :class="`call-item__status--${call.status}`"
+                            ) {{ call.status === 'success' ? 'Принят' : 'Пропущен' }}
+
+                            span.call-item__duration(v-if="call.duration") {{ call.duration }} сек.
+                            span.call-item__wait(v-else-if="call.wait") Ожидание: {{ call.wait }} сек.
+
+                        .call-item__col.call-item__col--action(v-if="call.record")
+                            audio.call-item__audio(controls :src="call.record" preload="none")
 </template>
 <script>
 import { api } from '@/api/api';

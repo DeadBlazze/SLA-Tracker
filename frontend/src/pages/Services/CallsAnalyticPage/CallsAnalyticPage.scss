@@ -353,4 +353,149 @@
             }
         }
     }
+    section.calls-history {
+        margin-top: 50px;
+        background: var(--color-bg2);
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+        color: var(--color-text);
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+
+        .calls-history__title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--color-text);
+            margin: 0;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--color-bg);
+        }
+
+        .calls-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+
+            &__header {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            &__phone {
+                font-size: 16px;
+                font-weight: 600;
+                color: var(--color-text);
+            }
+
+            &__badge {
+                background-color: var(--color-bg);
+                border: 1px solid var(--color-accent);
+                color: var(--color-accent-light);
+                padding: 2px 8px;
+                border-radius: 4px;
+                font-size: 12px;
+                font-weight: 500;
+            }
+
+            .calls-list {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .call-item {
+                background: var(--color-bg);
+                border: 1px solid transparent;
+                border-radius: 8px;
+                padding: 12px 16px;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-between;
+                align-items: center;
+                gap: 16px;
+                transition: border-color 0.2s ease, box-shadow 0.2s ease;
+                
+                &:hover {
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+                }
+
+                &--missed {
+                    border-left: 3px solid #d32f2f;
+                }
+
+                &--success {
+                    border-left: 3px solid #2e7d32;
+                }
+
+                &__col {
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+
+                    &--main {
+                        flex-direction: column;
+                        align-items: flex-start;
+                        gap: 4px;
+                        min-width: 220px;
+                    }
+
+                    &--stats {
+                        display: flex;
+                        align-items: center;
+                        gap: 14px;
+                    }
+
+                    &--action {
+                        margin-left: auto;
+                    }
+                }
+
+                &__client {
+                    font-size: 15px;
+                    font-weight: 600;
+                    color: var(--color-text);
+                }
+
+                &__meta {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    font-size: 12px;
+                    color: var(--color-accent);
+                }
+
+                &__status {
+                    font-size: 12px;
+                    font-weight: 600;
+                    padding: 4px 8px;
+                    border-radius: 4px;
+
+                    &--success {
+                        background: rgba(46, 125, 50, 0.1);
+                        color: #2e7d32;
+                    }
+
+                    &--missed {
+                        background: rgba(211, 47, 47, 0.1);
+                        color: #d32f2f;
+                    }
+                }
+
+                &__duration,
+                &__wait {
+                    font-size: 13px;
+                    color: var(--color-text);
+                    font-variant-numeric: tabular-nums;
+                }
+
+                &__audio {
+                    height: 32px;
+                    outline: none;
+                }
+            }
+        }
+    }
 }
