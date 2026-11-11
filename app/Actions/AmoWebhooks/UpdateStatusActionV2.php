@@ -150,22 +150,4 @@ class UpdateStatusActionV2{
         }
         // updateLeadStatusJob::dispatch($lead);
     }
-    private function extractFilledCustomFieldIds(array $lead): array
-    {
-        $rawFields = $lead['custom_fields'] ?? [];
-        $filledIds = [];
-
-        foreach ($rawFields as $field) {
-            $fieldId = (int) ($field['id'] ?? 0);
-            
-            // Проверяем, что значение действительно существует и не пустое
-            $hasValue = ! empty($field['values'][0]);
-
-            if ($fieldId > 0 && $hasValue) {
-                $filledIds[] = $fieldId;
-            }
-        }
-
-        return $filledIds;
-    }
 }
