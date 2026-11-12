@@ -116,7 +116,7 @@
 
                 .stats__empty(v-else)
                     p За выбранный период звонков не найдено.
-        section.calls-history(v-if="history")
+        section.calls-history(v-if="history && Object.values(history).some(group => group?.length > 0)")
             h2.calls-history__title История звонков
 
             .calls-group(v-for="(group, phoneKey) in history" :key="phoneKey")
@@ -133,7 +133,7 @@
                         .call-item__col.call-item__col--main
                             .call-item__client {{ call.client }}
                             .call-item__meta
-                                span.call-item__time {{ call.start }}
+                                span.call-item__time {{ new Date(call?.start).toLocaleString('ru-RU', { dateStyle: 'short', timeStyle: 'short' }) }}
                                 span.call-item__target(v-if="call.user_name || call.group_name") 
                                     | → {{ call.user_name || call.group_name }}
 
@@ -146,7 +146,7 @@
                             span.call-item__wait(v-else-if="call.wait") Ожидание: {{ call.wait }} сек.
 
                         .call-item__col.call-item__col--action(v-if="call.record")
-                            audio.call-item__audio(controls :src="call.record" preload="none")
+                            audio.call-item__audio(controls :src="call.record" preload="none" @play="handlePlay")
 </template>
 <script>
 import { api } from '@/api/api';
@@ -180,7 +180,8 @@ export default {
                 total: 0,
                 success: 0,
                 missed: 0
-            }
+            },
+            currentlyPlaying: null
         }
     },
     computed: {
@@ -314,9 +315,15 @@ export default {
                 missed: item.missed
             };
         },
-
         hideTooltip() {
             this.tooltip.visible = false;
+        },
+        handlePlay(event) {
+            const audio = event.target;
+            if (this.currentlyPlaying && this.currentlyPlaying !== audio) {
+                this.currentlyPlaying.pause();
+            }
+            this.currentlyPlaying = audio;
         }
     },
     mounted() {
@@ -325,7 +332,13 @@ export default {
 
         this.dateFrom = todayStr;
         this.dateTo = todayStr;
-    }   
+    },
+    beforeUnmount() { 
+        if (this.currentlyPlaying) {
+            this.currentlyPlaying.pause();
+            this.currentlyPlaying = null;
+        }
+    }
 }
 </script>
 <style lang="scss" scoped>
