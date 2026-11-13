@@ -21,11 +21,12 @@ class LoginUserAction {
         if(!$user || !Hash::check($data['password'], $user->password)){
             throw new InvalidCredentialsException();
         }
-        $token = $token = $this->jwtService->createToken($user->id, $user->role_id);
+        $tokenData = $this->jwtService->createToken($user->id, $user->role_id);
         $roleId = $user->role_id;
         return [
             'success' => true,
-            'token' => $token,
+            'token' => $tokenData['access_token'],
+            'expires_at' => $tokenData['expires_at'],
             'role_id'=> $roleId,
             'name' => $user->name ?? null,
             'surname' => $user->surname ?? null,

@@ -66,7 +66,6 @@ const router = createRouter({
 router.beforeEach(async (to, from) => {
   const userStore = useUserStore()
   const targetRoute = to.matched.at(-1)
-
   if(!targetRoute?.meta?.requiresAuth) return true
   if(!userStore.isAuthenticated || !userStore.roleId) return '/login'
   

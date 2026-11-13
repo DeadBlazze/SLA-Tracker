@@ -3,25 +3,31 @@ import { defineStore } from 'pinia'
 export const useUserStore = defineStore('user', {
     state: () => ({
         token: localStorage.getItem('token') || null,
+        token_expires_at: localStorage.getItem('token_expires_at') || null,
         roleId: Number(localStorage.getItem('role_id')) || null,
         preview: localStorage.getItem('preview') || null,
         roleAlias: localStorage.getItem('roleAlias') || null
     }),
     getters: {
         // Удобный флаг авторизации для Vue Router Navigation Guard
-        isAuthenticated: (state) => !!state.token,
-
-        // Проверка суперадмина / ролей
-        isSuperAdmin: (state) => state.roleId === 1,
+        isAuthenticated: (state) => {
+            if (!state.token || !state.token_expires_at) {
+                return false;
+            }
+            const currentTimestamp = Math.floor(Date.now() / 1000);
+            return currentTimestamp < Number(state.token_expires_at);
+        }
     },
     actions: {
         login(data) {
             this.token = data.token
+            this.token_expires_at = data.expires_at
             this.roleId = Number(data.role_id)
             this.preview = `${data.surname} ${data.name}`
             this.roleAlias = data.roleAlias
             // Сохраняем в localStorage отдельными ключами
             localStorage.setItem('token', this.token)
+            localStorage.setItem('token_expires_at', this.token_expires_at)
             localStorage.setItem('role_id', Number(this.roleId))
             localStorage.setItem('preview', String(this.preview))
             localStorage.setItem('roleAlias', String(this.roleAlias))
@@ -31,6 +37,7 @@ export const useUserStore = defineStore('user', {
         logout() {
             // Удаляем именно те ключи, которые создавали
             localStorage.removeItem('token')
+            localStorage.removeItem('expires_at')
             localStorage.removeItem('role_id')
             localStorage.removeItem('preview')
             localStorage.removeItem('roleAlias')

@@ -19,7 +19,7 @@ class JWTAuthMiddleware
         $authHeader = $request->header('Authorization');
 
         if (!$authHeader || !str_starts_with($authHeader, 'Bearer ')) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json(['error' => 'Не передан bearer token'], 401);
         }
 
         $token = substr($authHeader, 7);

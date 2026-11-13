@@ -18,8 +18,7 @@ Route::post('/dashboard/get-managers-activity', [DashboardController::class, 'ge
 ->middleware(['jwtAuth', 'roleCheck:1,2']);
 Route::post('/dashboard/get-calls-analytic', [DashboardController::class, 'getCallsAnalytic'])
 ->middleware(['jwtAuth', 'roleCheck:1,2']);
-// Route::post('/test', [testController::class, 'index'])
-// ->middleware(['jwtAuth', 'roleCheck:1,2,3']);
+Route::post('/test', [testController::class, 'index']);
 
 // Amowebhooks
 Route::post('/oauth/callback', [AmoOAuthController::class, 'callback']);

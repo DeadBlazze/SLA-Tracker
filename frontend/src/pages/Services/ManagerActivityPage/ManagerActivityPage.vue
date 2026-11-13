@@ -121,8 +121,6 @@ export default {
                     }
                 });
                 this.activityData = result.data;
-                console.log('Данные успешно загружены:', result);
-                
             } catch (error) {
                 console.error('Ошибка при загрузке активности:', error);
             }finally{

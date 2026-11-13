@@ -63,6 +63,7 @@ export default {
             this.errors = {}
             const payload = {login: this.form.email, password: this.form.password}
             try {
+                
                 const response = await api.post('/dashboard/login', payload)
                 const data = response?.data
 
@@ -71,7 +72,6 @@ export default {
                     toast.error({ title: 'Ошибка', content: 'Некорректный ответ сервера: отсутствует токен или роль' })
                     return
                 }
-
                 this.userStore.login(data)
                 this.$router.push('/dashboard')
             } catch (e) {
