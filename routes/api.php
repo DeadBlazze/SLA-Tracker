@@ -10,6 +10,7 @@ use App\Http\Controllers\Dashboard\AuthController;
 use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Middleware\JWTAuthMiddleware;
 use App\Http\Middleware\CheckRoleMiddleware;
+use App\Http\Middleware\VerifyAmoWebhook;
 
 Route::get('/', fn () => response()->json(['Данный enpoint не поддерживается в настоящее время']));
 
@@ -22,10 +23,11 @@ Route::post('/test', [testController::class, 'index']);
 
 // Amowebhooks
 Route::post('/oauth/callback', [AmoOAuthController::class, 'callback']);
-Route::prefix('/webhooks/amo')->group(function () {
-    // Единый эндпоинт для обработки всех вебхуков (смена статуса, создание сделки)
-    Route::post('/', [AmoWebhookController::class, 'handle']);
-    // Route::post('/restore', [AmoWebhookController::class, 'restore']);
+Route::prefix('/webhooks/amo')->middleware(VerifyAmoWebhook::class)
+    ->group(function () {
+        // Единый эндпоинт для обработки всех вебхуков (смена статуса, создание сделки)
+        Route::post('/', [AmoWebhookController::class, 'handle']);
+        // Route::post('/restore', [AmoWebhookController::class, 'restore']);
 });
 
 // МегаФон АТС
