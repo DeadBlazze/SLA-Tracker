@@ -46,6 +46,8 @@ return [
     'calltracking_one'=>[
         'tk-dvina_token' => env('CALLTRACKING_ONE_TOKEN1'),
         'tkdvina_token' => env('CALLTRACKING_ONE_TOKEN2'),
+    ],
+    'dadata' => [
+        'token' => env('DADATA_TOKEN')
     ]
-
 ];

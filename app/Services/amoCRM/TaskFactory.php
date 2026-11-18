@@ -35,16 +35,28 @@ class TaskFactory {
         $this->client = app('amocrm.client');
     }
 
-    public function execute(int $pipeline_id, int $status_id, int $lead_id){
+    public function execute(int $pipeline_id, int $status_id, int $lead_id, int $responsible_user_id){
         $task_type_id = self::TARGET_TASK_STATUSES[$pipeline_id][$status_id]["task_type_id"] ?? null;
         if (!$task_type_id) {
             return;
         }
-
-        
-        $taskExist = $this->tasks->insertOrIgnore([$]);
-        
-        
+        $taskExist = $this->tasks->whereExists(['lead_id' => $lead_id, 'status_id' => $status_id, 'pipeline_id' => $pipeline_id, 'task_type_id' => $task_type_id]);
+        if(!$taskExist){
+            $nowTimestamp = Carbon::now('UTC')->timestamp;
+            $execution_time = self::TARGET_TASK_STATUSES[$pipeline_id][$status_id]["execution_time"];
+            $this->tasks->insertOrIgnore([
+                'lead_id' => $lead_id,
+                'pipeline_id' => $pipeline_id,
+                'status_id' => $status_id,
+                'task_type_id' => $task_type_id,
+                'responsible_user_id' => $responsible_user_id,
+                'is_completed' => false,
+                'complete_till' => Carbon::createFromTimestamp($nowTimestamp + $execution_time),
+                'created_at' => Carbon::createFromTimestamp($nowTimestamp)
+            ]);
+            error_log(123);
+        }
+        return;
         $token = config('services.amocrm.token');
         
 

@@ -6,11 +6,13 @@ use App\Repositories\LeadRepository;
 use Carbon\Carbon;
 use App\Actions\AmoWebhooks\RestoreStatusLogsActionV2;
 use App\Models\Lead;
+use App\Services\amoCRM\RequisitesAutocomplete;
 
 class UpdateLeadAction {
      public function __construct(
         private LeadRepository $leads,
-        private RestoreStatusLogsActionV2 $restoreStatusLogs
+        private RestoreStatusLogsActionV2 $restoreStatusLogs,
+        private RequisitesAutocomplete $requisitesAutocomplete
     ) {}
     public function handle($lead){
         $leadId = !empty($lead['id']) ? (int) $lead['id'] : null;
@@ -29,6 +31,10 @@ class UpdateLeadAction {
         foreach($lead['custom_fields'] ?? [] as $field){
             $customFields[$field['id']] = $field['values'][0] ?? null;
         }
+        
+        $inn = $customFields[701573]['value'] ?? null;
+        $previousInn = $customFields[732539]['value'] ?? null;
+        $this->requisitesAutocomplete->update($inn, $previousInn, $leadId);
 
         $loadedAt = $customFields[726049]['value'] ?? null;
         // Заполняем модель новыми данными
