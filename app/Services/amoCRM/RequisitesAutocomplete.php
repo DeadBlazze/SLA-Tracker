@@ -19,6 +19,9 @@ class RequisitesAutocomplete{
                 'json' => ["query"=> $actualInn, "branch_type"=> "MAIN"]
             ]);
             $dadata = json_decode((string) $response->getBody(), true);
+            if (empty($dadata['suggestions'])) {
+                return; 
+            }
             $suggestions = $dadata['suggestions'][0];
             $amoFieldsToUpdate = [];
 
