@@ -20,7 +20,7 @@ class getCallsAnalyticAction {
 
         $api_key = config('services.megafon.api_key');
         $client = new Client([
-            'timeout' => 3.0,
+            'timeout' => 5.0,
         ]);
         $history = [];
         foreach($phonesArray as $phone){

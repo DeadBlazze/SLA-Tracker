@@ -12,27 +12,26 @@ use App\Services\amoCRM\AmoFieldsAndStatusLogsFactory;
 use Illuminate\Support\Facades\DB;
 
 class RestoreStatusLogsActionV2{
+    protected Client $client;
+    private const PIPELINES_ORDER = AmoPipelines::DATA['PIPELINES_ORDER'];
+    private const TRACKED_PIPELINES_STATUSES = AmoPipelines::DATA['TRACKED_PIPELINES_STATUSES'];
+    
     public function __construct(
         private LeadRepository $leads,
         private LeadStatusLogRepository $leadStatusLogs,
         private ResolveLeadSourceService $leadSourceResolver,
         private AmoFieldsAndStatusLogsFactory $amoCustomFieldsAndLogs
-    ) {}
-    private const PIPELINES_ORDER = AmoPipelines::DATA['PIPELINES_ORDER'];
-    private const TRACKED_PIPELINES_STATUSES = AmoPipelines::DATA['TRACKED_PIPELINES_STATUSES'];
+    ){
+        $this->client = app('amocrm.client');
+    }
 
     public function execute($leadId){
         if(!$leadId) return Log::warning('AmoWebhook: Lead payload without valid ID');
         
         // Подгружаем сделку и source
-        $baseDomain = config('services.amocrm.base_domain');
         $token = config('services.amocrm.token');
-        $client = new Client([
-            'base_uri' => "https://{$baseDomain}",
-            'timeout'  => 5.0
-        ]);
         try{
-            $response = $client->get("/api/v4/leads/{$leadId}?with=source", [
+            $response = $this->client->get("/api/v4/leads/{$leadId}?with=source", [
                 'headers' => [
                 'Authorization' => "Bearer {$token}",
                 ],
@@ -75,8 +74,9 @@ class RestoreStatusLogsActionV2{
             'responsible_user_id' => $leadData['responsible_user_id'] ?? null,
             'created_at'          => $now->toDateTimeString()
         ];
-        if(!$logsCap['responsible_user_id']) Log::warning("missed responsible : {$leadData}");
-        
+        if(!$logsCap['responsible_user_id']){
+            Log::warning("missed responsible : " . json_encode($leadData, JSON_UNESCAPED_UNICODE));
+        }
         // Формируем custom fields
         $customFields = [];
         foreach($leadData['custom_fields_values'] ?? [] as $field){
@@ -116,7 +116,7 @@ class RestoreStatusLogsActionV2{
             ],
         ];
 
-        $response = $client->get("/api/v4/events?filter[entity]=leads&filter[entity_id]={$leadId}&filter[type]=lead_status_changed", [
+        $response = $this->client->get("/api/v4/events?filter[entity]=leads&filter[entity_id]={$leadId}&filter[type]=lead_status_changed", [
             'headers' => [
             'Authorization' => "Bearer {$token}",
             ],
@@ -182,7 +182,7 @@ class RestoreStatusLogsActionV2{
         
         // Приводим ассоциативный массив к плоскому списку для отправки в API
         $amoPayload = array_values($amoFieldsToUpdate);
-        $response = $client->patch("/api/v4/leads/{$leadId}", [
+        $response = $this->client->patch("/api/v4/leads/{$leadId}", [
             'headers' => [
                 'Authorization' => "Bearer {$token}",
             ],

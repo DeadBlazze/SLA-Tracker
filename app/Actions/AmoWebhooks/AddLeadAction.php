@@ -11,26 +11,24 @@ use Illuminate\Support\Facades\Log;
 use App\Support\AmoPipelines;
 
 class AddLeadAction {
-    public function __construct(
-        private LeadRepository $leads,
-        private ResolveLeadSourceService $leadSourceResolver
-    ) {}
-
+    protected Client $client;
     private const PIPELINES_ORDER = AmoPipelines::DATA['PIPELINES_ORDER'];
     private const TRACKED_PIPELINES_STATUSES = AmoPipelines::DATA['TRACKED_PIPELINES_STATUSES'];
 
+    public function __construct(
+        private LeadRepository $leads,
+        private ResolveLeadSourceService $leadSourceResolver,
+    ){
+        $this->client = app('amocrm.client');
+    }
+
     public function handle($lead){
         // Запрашиваем все поля сделки
-        $baseDomain = config('services.amocrm.base_domain');
         $token = config('services.amocrm.token');
-        $client = new Client([
-            'base_uri' => "https://{$baseDomain}",
-            'timeout'  => 5.0
-        ]);
         $leadId = $lead['id'];
 
         try{
-            $response = $client->get("/api/v4/leads/{$leadId}?with=source", [
+            $response = $this->client->get("/api/v4/leads/{$leadId}?with=source", [
                 'headers' => [
                 'Authorization' => "Bearer {$token}",
                 ],
@@ -115,7 +113,7 @@ class AddLeadAction {
                 
                 
         // Патчим сделку
-        $response = $client->patch("/api/v4/leads/{$leadId}", [
+        $response = $this->client->patch("/api/v4/leads/{$leadId}", [
             'headers' => [
                 'Authorization' => "Bearer {$token}",
             ],

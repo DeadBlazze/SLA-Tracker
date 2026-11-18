@@ -5,21 +5,19 @@ use App\Repositories\LeadStatusLogRepository;
 use App\Support\AmoUsers;
 use App\Support\AmoPipelines;
 use Carbon\Carbon;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class getActivityAction{
+    private const USERS = AmoUsers::DATA['USERS'];
+    private const USERS_LABELS = AmoUsers::DATA['USERS_LABELS'];
+    private const STATUSES_LABELS = AmoPipelines::DATA['STATUSES_LABELS'];
+
     public function __construct(
         public LeadRepository $leads,
         public LeadStatusLogRepository $leadLogs
     ){}
-    private const USERS = AmoUsers::DATA['USERS'];
-    private const USERS_LABELS = AmoUsers::DATA['USERS_LABELS'];
-    private const STATUSES_LABELS = AmoPipelines::DATA['STATUSES_LABELS'];
-    // private const STATUSES_FOR_SORT = AmoPipelines::DATA['STATUSES_FOR_SORT'];
-
+    
     public function execute($data){
         $dateFromRaw = $data['datetimeFrom'];
         $dateToRaw = $data['datetimeTo'];

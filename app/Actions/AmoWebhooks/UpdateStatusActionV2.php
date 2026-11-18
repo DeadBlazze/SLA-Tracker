@@ -14,17 +14,22 @@ use App\Support\AmoPipelines;
 use App\Actions\AmoWebhooks\RestoreStatusLogsActionV2;
 use App\Services\amoCRM\AmoFieldsAndStatusLogsFactory;
 use Illuminate\Support\Facades\File;
+use App\Services\amoCRM\TaskFactory;
 class UpdateStatusActionV2{
+    protected Client $client;
+    private const PIPELINES_ORDER = AmoPipelines::DATA['PIPELINES_ORDER'];
+    private const TRACKED_PIPELINES_STATUSES = AmoPipelines::DATA['TRACKED_PIPELINES_STATUSES'];
+
     public function __construct(
         private LeadRepository $leads,
         private LeadStatusLogRepository $leadStatusLogs,
         private ResolveLeadSourceService $leadSourceResolver,
         private RestoreStatusLogsActionV2 $restoreStatusLogs,
-        private AmoFieldsAndStatusLogsFactory $amoCustomFieldsAndLogs
-    ) {}
-
-    private const PIPELINES_ORDER = AmoPipelines::DATA['PIPELINES_ORDER'];
-    private const TRACKED_PIPELINES_STATUSES = AmoPipelines::DATA['TRACKED_PIPELINES_STATUSES'];
+        private AmoFieldsAndStatusLogsFactory $amoCustomFieldsAndLogs,
+        private TaskFactory $taskFactory
+    ){
+        $this->client = app('amocrm.client');
+    }
     
     public function handle($lead){
         $leadId = !empty($lead['id']) ? (int) $lead['id'] : null;
@@ -110,15 +115,10 @@ class UpdateStatusActionV2{
             ],
         ];
 
-        $baseDomain = config('services.amocrm.base_domain');
         $token = config('services.amocrm.token');
-        $client = new Client([
-            'base_uri' => "https://{$baseDomain}",
-            'timeout'  => 5.0
-        ]);
 
         // Patch amo Дата Время создания
-        $response = $client->patch("/api/v4/leads/{$lead['id']}", [
+        $response = $this->client->patch("/api/v4/leads/{$lead['id']}", [
             'headers' => [
                 'Authorization' => "Bearer {$token}",
             ],
