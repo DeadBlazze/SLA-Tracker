@@ -9,6 +9,7 @@ use GuzzleHttp\Exception\RequestException;
 use App\Services\amoCRM\ResolveLeadSourceService;
 use Illuminate\Support\Facades\Log;
 use App\Support\AmoPipelines;
+use App\Services\amoCRM\TaskFactory;
 
 class AddLeadAction {
     protected Client $client;
@@ -18,6 +19,7 @@ class AddLeadAction {
     public function __construct(
         private LeadRepository $leads,
         private ResolveLeadSourceService $leadSourceResolver,
+        private TaskFactory $taskFactory
     ){
         $this->client = app('amocrm.client');
     }
@@ -54,6 +56,7 @@ class AddLeadAction {
             "amo_source_name" => $leadData['_embedded']['source']['name'] ?? null,
             "amo_source_id" => $leadData['_embedded']['source']['id'] ?? null,
             "created_at" => Carbon::createFromTimestamp($lead['date_create'])->toDateTimeString(),
+            "responsible_user_id" => $leadData['responsible_user_id'] ?? null
         ];
 
         
@@ -125,5 +128,6 @@ class AddLeadAction {
         if($response->getStatusCode() === 200){
             $this->leads->upsert($dbLeadData);
         }
+        $this->taskFactory->execute($dbLeadData['amo_lead_id'], $dbLeadData['pipeline_id'], $dbLeadData['status_id'], $dbLeadData['responsible_user_id']);
     }
 }

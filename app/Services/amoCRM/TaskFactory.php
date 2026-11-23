@@ -37,7 +37,7 @@ class TaskFactory {
         $this->client = app('amocrm.client');
     }
 
-    public function execute(int $pipeline_id, int $status_id, int $lead_id, int $responsible_user_id){
+    public function execute(int $lead_id, int $pipeline_id, int $status_id, int $responsible_user_id){
         $task_type_id = self::TARGET_TASK_STATUSES[$pipeline_id][$status_id]["task_type_id"] ?? null;
         if (!$task_type_id) {
             return;
@@ -55,7 +55,7 @@ class TaskFactory {
                 'responsible_user_id' => $responsible_user_id,
                 'is_completed' => false,
                 'complete_till' => $nowTimestamp + $execution_time,
-                'created_at' => Carbon::createFromTimestamp($nowTimestamp)
+                'created_at' => Carbon::createFromTimestamp($nowTimestamp)->toDateTimeString()
             ];
             try{
                 $token = config('services.amocrm.token');
@@ -78,7 +78,8 @@ class TaskFactory {
                 Log::error("Ошибка отправки задачи: " . $e->getMessage());
                 return;
             }
-            $this->tasks->insertOrIgnore($task);
+            $task['complete_till'] = Carbon::createFromTimestamp($task['complete_till'])->toDateTimeString();
+            $this->tasks->insert($task);
         }
         return;
     }

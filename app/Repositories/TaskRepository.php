@@ -11,8 +11,8 @@ class TaskRepository{
             array_keys($data) 
         );
     }
-    public function insertOrIgnore($data){
-        return Task::insertOrIgnore($data);
+    public function insert($data){
+        return Task::insert($data);
     }
     public function whereExists($data){
         return Task::where($data)->first();
