@@ -11,8 +11,8 @@ class Task extends Model
     const CREATED_AT = null;
 
     public $incrementing = false;
-    protected $primaryKey = ['lead_id', 'status_id', 'task_type_id'];
-    protected $keyType = 'string';
+    protected $primaryKey = 'task_id';
+    protected $keyType = 'int';
 
     protected $fillable = [
         'lead_id',
