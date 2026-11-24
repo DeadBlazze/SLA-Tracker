@@ -116,37 +116,38 @@
 
                 .stats__empty(v-else)
                     p За выбранный период звонков не найдено.
-        section.calls-history(v-if="history && Object.values(history).some(group => group?.length > 0)")
-            h2.calls-history__title История звонков
+        section.calls-history           
+            .calls-history__inner(v-if="history && Object.values(history).some(group => group?.length > 0)")
+                h2.calls-history__title История звонков
 
-            .calls-group(v-for="(group, phoneKey) in history" :key="phoneKey")
-                .calls-group__header
-                    span.calls-group__phone 8{{ phoneKey }}
-                    span.calls-group__badge Всего звонков: {{ group.length }}
+                .calls-group(v-for="(group, phoneKey) in history" :key="phoneKey")
+                    .calls-group__header
+                        span.calls-group__phone 8{{ phoneKey }}
+                        span.calls-group__badge Всего звонков: {{ group.length }}
 
-                .calls-list
-                    .call-item(
-                        v-for="call in group" 
-                        :key="call.uid"
-                        :class="`call-item--${call.status}`"
-                    )
-                        .call-item__col.call-item__col--main
-                            .call-item__client {{ call.client }}
-                            .call-item__meta
-                                span.call-item__time {{ new Date(call?.start).toLocaleString('ru-RU', { dateStyle: 'short', timeStyle: 'short' }) }}
-                                span.call-item__target(v-if="call.user_name || call.group_name") 
-                                    | → {{ call.user_name || call.group_name }}
+                    .calls-list
+                        .call-item(
+                            v-for="call in group" 
+                            :key="call.uid"
+                            :class="`call-item--${call.status}`"
+                        )
+                            .call-item__col.call-item__col--main
+                                .call-item__client {{ call.client }}
+                                .call-item__meta
+                                    span.call-item__time {{ new Date(call?.start).toLocaleString('ru-RU', { dateStyle: 'short', timeStyle: 'short' }) }}
+                                    span.call-item__target(v-if="call.user_name || call.group_name") 
+                                        | → {{ call.user_name || call.group_name }}
 
-                        .call-item__col.call-item__col--stats
-                            span.call-item__status(
-                                :class="`call-item__status--${call.status}`"
-                            ) {{ call.status === 'success' ? 'Принят' : 'Пропущен' }}
+                            .call-item__col.call-item__col--stats
+                                span.call-item__status(
+                                    :class="`call-item__status--${call.status}`"
+                                ) {{ call.status === 'success' ? 'Принят' : 'Пропущен' }}
 
-                            span.call-item__duration(v-if="call.duration") {{ call.duration }} сек.
-                            span.call-item__wait(v-else-if="call.wait") Ожидание: {{ call.wait }} сек.
+                                span.call-item__duration(v-if="call.duration") {{ call.duration }} сек.
+                                span.call-item__wait(v-else-if="call.wait") Ожидание: {{ call.wait }} сек.
 
-                        .call-item__col.call-item__col--action(v-if="call.record")
-                            audio.call-item__audio(controls :src="call.record" preload="none" @play="handlePlay")
+                            .call-item__col.call-item__col--action(v-if="call.record")
+                                audio.call-item__audio(controls :src="call.record" preload="none" @play="handlePlay")
 </template>
 <script>
 import { api } from '@/api/api';
