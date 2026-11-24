@@ -14,7 +14,7 @@ class testController extends Controller
         private TaskFactory $taskFactory
     ){}
     public function index(Request $request){
-        $this->taskFactory->execute(9088966,73139654,29341640, 12674562);
+        $this->taskFactory->execute(29341640, 9088966, 73140338, 8038798);
         // $token = JWT::encode(
         //     [
         //         'user_id' => 1,

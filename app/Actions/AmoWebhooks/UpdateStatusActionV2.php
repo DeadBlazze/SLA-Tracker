@@ -108,13 +108,14 @@ class UpdateStatusActionV2{
             $this->leads->update($dbLeadData);
             return;
         }
+        $this->taskFactory->execute($dbLeadData['amo_lead_id'], $dbLeadData['pipeline_id'], $dbLeadData['status_id'], $dbLeadData['responsible_user_id']);
+        
         $amoFieldsToUpdate[] = [
             'field_id' => $customFieldId,
             'values' => [
                 ['value' => Carbon::createFromTimestamp($lead['updated_at'])->toIso8601String()],
             ],
         ];
-
         $token = config('services.amocrm.token');
 
         // Patch amo Дата Время создания

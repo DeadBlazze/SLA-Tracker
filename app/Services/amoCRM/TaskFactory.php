@@ -38,15 +38,21 @@ class TaskFactory {
     }
 
     public function execute(int $lead_id, int $pipeline_id, int $status_id, int $responsible_user_id){
-        $task_type_id = self::TARGET_TASK_STATUSES[$pipeline_id][$status_id]["task_type_id"] ?? null;
-        if (!$task_type_id) {
+        $config = self::TARGET_TASK_STATUSES[$pipeline_id][$status_id] ?? null;
+        if (!$config) {
             return;
         }
-        $taskExist = $this->tasks->whereExists(['lead_id' => $lead_id, 'pipeline_id' => $pipeline_id, 'task_type_id' => $task_type_id]);
+        $task_type_id = $config['task_type_id'];
+
+        if($pipeline_id == 9088966){
+            $taskExist = $this->tasks->whereExists(['lead_id' => $lead_id, 'pipeline_id' => $pipeline_id, 'task_type_id' => $task_type_id]);
+        }else if($pipeline_id == 9089018){
+            $taskExist = $this->tasks->whereExists(['lead_id' => $lead_id, 'pipeline_id' => $pipeline_id, 'task_type_id' => $task_type_id, "status_id" => $status_id]);
+        }
         if(!$taskExist){
-            $nowTimestamp = Carbon::now('UTC')->timestamp;
-            $execution_time = self::TARGET_TASK_STATUSES[$pipeline_id][$status_id]["execution_time"];
-            $text = self::TARGET_TASK_STATUSES[$pipeline_id][$status_id]["text"];
+            $nowTimestamp = $this->getStartTimestamp();
+            $execution_time = $config["execution_time"];
+            $text = $config["text"];
             $task = [
                 'lead_id' => $lead_id,
                 'pipeline_id' => $pipeline_id,
@@ -55,7 +61,7 @@ class TaskFactory {
                 'responsible_user_id' => $responsible_user_id,
                 'is_completed' => false,
                 'complete_till' => $nowTimestamp + $execution_time,
-                'created_at' => Carbon::createFromTimestamp($nowTimestamp)->toDateTimeString()
+                'created_at' => Carbon::now('UTC')->toDateTimeString()
             ];
             try{
                 $token = config('services.amocrm.token');
@@ -82,6 +88,22 @@ class TaskFactory {
             $this->tasks->insert($task);
         }
         return;
+    }
+    private function getStartTimestamp(): int
+    {
+        $now = Carbon::now('Europe/Moscow');
+
+        if ($now->hour >= 18) {
+            // После 18:00 — переносим старт на завтра на 08:00
+            $now->addDay()->setTime(8, 0, 0);
+        } elseif ($now->hour < 8) {
+            // До 08:00 — переносим старт на сегодня на 08:00
+            $now->setTime(8, 0, 0);
+        }
+        // while ($now->isWeekend()) {
+        //     $now->addDay();
+        // }
+        return $now->timestamp;
     }
 
 }
