@@ -15,6 +15,7 @@ use App\Actions\AmoWebhooks\RestoreStatusLogsActionV2;
 use App\Services\amoCRM\AmoFieldsAndStatusLogsFactory;
 use Illuminate\Support\Facades\File;
 use App\Services\amoCRM\TaskFactory;
+use Illuminate\Support\Facades\Storage;
 class UpdateStatusActionV2{
     protected Client $client;
     private const PIPELINES_ORDER = AmoPipelines::DATA['PIPELINES_ORDER'];
@@ -108,7 +109,9 @@ class UpdateStatusActionV2{
             $this->leads->update($dbLeadData);
             return;
         }
-        $this->taskFactory->execute($dbLeadData['amo_lead_id'], $dbLeadData['pipeline_id'], $dbLeadData['status_id'], $dbLeadData['responsible_user_id']);
+        // Передаём данные в taskFactory
+        $data = json_decode(Storage::disk('local')->get('amo_duty_manager.json'), true);
+        $this->taskFactory->execute($dbLeadData['amo_lead_id'], $dbLeadData['pipeline_id'], $dbLeadData['status_id'], $data['amo_user_id']);
         
         $amoFieldsToUpdate[] = [
             'field_id' => $customFieldId,

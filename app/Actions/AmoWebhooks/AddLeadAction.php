@@ -10,6 +10,7 @@ use App\Services\amoCRM\ResolveLeadSourceService;
 use Illuminate\Support\Facades\Log;
 use App\Support\AmoPipelines;
 use App\Services\amoCRM\TaskFactory;
+use Illuminate\Support\Facades\Storage;
 
 class AddLeadAction {
     protected Client $client;
@@ -128,6 +129,9 @@ class AddLeadAction {
         if($response->getStatusCode() === 200){
             $this->leads->upsert($dbLeadData);
         }
-        $this->taskFactory->execute($dbLeadData['amo_lead_id'], $dbLeadData['pipeline_id'], $dbLeadData['status_id'], $dbLeadData['responsible_user_id']);
+        
+        // Передаём данные в taskFactory
+        $data = json_decode(Storage::disk('local')->get('amo_duty_manager.json'), true);
+        $this->taskFactory->execute($dbLeadData['amo_lead_id'], $dbLeadData['pipeline_id'], $dbLeadData['status_id'], $data['amo_user_id']);
     }
 }
